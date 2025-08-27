@@ -9,20 +9,19 @@ class FoodMenuRepository{
   })async{
     return DioClient(baseUrl: EndPoints.baseUrl,
 
-    ).uploadImagesWithData(imageFiles: listImages,
-
+    ).uploadImagesWithData(
+        imageFiles: listImages,
         data: mapData,
         endPoint: "menu/");
   }
 
   static Future<ApiResults?> patchFoodMenuRepository({required
   List<ImageUploadModel> listImages,
-
     required String vendorId
   })async{
     return DioClient(baseUrl: EndPoints.baseUrl,
     ).
     patchMultipartData(
-        endPoint: "menu/", listUploadModel:listImages, mapData: {}, vendorId:vendorId);
+        endPoint: "menu", listUploadModel:listImages, mapData: {}, vendorId:vendorId);
   }
 }

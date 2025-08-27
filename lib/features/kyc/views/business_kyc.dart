@@ -81,6 +81,23 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
                 }
               },
             ),
+
+
+
+            20.height(),
+            CustomTextField(textController: KycController.businessDescription,
+              title: "Business Description",
+              validator: (String? data){
+                if("$data".length<50){
+
+                }else{
+                  return "Enter Valid Business Description";
+                }
+              },
+
+            ),
+
+
             20.height(),
             CustomTextField(textController: KycController.gst,
               title: "GST IN",
@@ -95,7 +112,6 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
 
             ),
             20.height(),
-
             CustomTextField(textController: KycController.panCard,
               title: "Pan Card".toUpperCase(),
               length: 10,
@@ -107,7 +123,6 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
                 }
               },
             ),
-
             20.height(),
             CustomTextField(textController: KycController.fssai,
               title: "FSSAI License",

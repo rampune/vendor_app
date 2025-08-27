@@ -51,7 +51,7 @@ class OnOFFs extends StatefulWidget {
 
 class _OnOFFsState extends State<OnOFFs> {
 
-  List<Icon> iconList=[Icon(Icons.toggle_on,size: 50,
+  List<Icon> iconList=[Icon(Icons.toggle_on_outlined,size: 50,
   color: AppColors.green,
   ),Icon(Icons.toggle_off_outlined,size: 50,color: AppColors.red,)];
   @override

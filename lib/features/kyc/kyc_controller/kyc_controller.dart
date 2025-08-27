@@ -10,6 +10,7 @@ class KycController{
 static int  ?selectedTypeIndex;
 static TextEditingController vendorName=TextEditingController();
   static TextEditingController businessName=TextEditingController();
+  static TextEditingController businessDescription = TextEditingController();
   static TextEditingController gst=TextEditingController();
   static TextEditingController panCard=TextEditingController();
   static TextEditingController fssai=TextEditingController();

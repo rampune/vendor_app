@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/config/logger.dart';
@@ -236,38 +237,111 @@ if(!"$data".isValidWebsite()){
                     ],
                   ),
                   10.height(),
-                  if(manualLocationOff)    CustomTextField(
 
+
+
+
+                  ///AmraRam old Code
+                  // if(manualLocationOff)    CustomTextField(
+                  //
+                  //   focusColor: AppColors.darkGray,
+                  //   readOnly: true,
+                  //   onTap: ()async{
+                  //     OverlayLoadingProgress.start(context);
+                  //     Position? position=await   LocationService().getPosition(context,timeoutSecond: 30);
+                  //     double  lat=position?.latitude??0;
+                  //     double  log=position?.longitude??0;
+                  //     String ? address=await getAddressFromLatLng(position?.latitude??0.0, position?.longitude??0.0,timeOutSecond: 20);
+                  //     if(address!=null){
+                  //       AdminController.addressController.text=jsonEncode({
+                  //         "address":address,
+                  //         "lat":lat,
+                  //         "log":log
+                  //       });
+                  //     }else if(position!=null){
+                  //
+                  //       AdminController.addressController.text="lat : ${position.latitude} log : ${position.longitude}";
+                  //     }
+                  //     OverlayLoadingProgress.stop();
+                  //   },
+                  //   placeHolderText: "Select Location",
+                  //   suffix: Icon(Icons.arrow_drop_down_sharp),
+                  //   textController:AdminController.addressController,
+                  //   title: "Address",
+                  //   validator: (String ? data){
+                  //     if(data?.isEmpty??true){
+                  //       return "Please Select Address";
+                  //     }
+                  //   },
+                  // ),
+
+
+                  ///Saransh new code
+                  if(manualLocationOff)
+                    CustomTextField(
                     focusColor: AppColors.darkGray,
                     readOnly: true,
-                    onTap: ()async{
+                    onTap: () async {
                       OverlayLoadingProgress.start(context);
-                      Position? position=await   LocationService().getPosition(context,timeoutSecond: 30);
-                      double  lat=position?.latitude??0;
-                      double  log=position?.longitude??0;
-                      String ? address=await getAddressFromLatLng(position?.latitude??0.0, position?.longitude??0.0,timeOutSecond: 20);
-                      if(address!=null){
-                        AdminController.addressController.text=jsonEncode({
-                          "address":address,
-                          "lat":lat,
-                          "log":log
-                        });
-                      }else if(position!=null){
+                      try {
+                        // Get the current position
+                        Position? position = await LocationService().getPosition(context, timeoutSecond: 30);
+                        double lat = position?.latitude ?? 0.0;
+                        double lng = position?.longitude ?? 0.0;
 
-                        AdminController.addressController.text="lat : ${position.latitude} log : ${position.longitude}";
+                        // Fetch detailed address using geocoding package
+                        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng).timeout(Duration(seconds: 20));
+                        Placemark placemark = placemarks.first;
+
+                        // Extract address components
+                        String? street = placemark.street;
+                        String? locality = placemark.locality; // City
+                        String? administrativeArea = placemark.administrativeArea; // State
+                        String? postalCode = placemark.postalCode; // Pincode
+                        String? subLocality = placemark.subLocality; // Landmark or neighborhood
+                        String? name = placemark.name; // Building or specific place name
+
+                        // Combine building, landmark, and street for address field
+                        String formattedAddress = [
+                          name ?? '',
+                          street ?? '',
+                          subLocality ?? '',
+                        ].where((element) => element.isNotEmpty).join(', ');
+
+                        // Update controllers
+                        if (formattedAddress.isNotEmpty) {
+                          AdminController.addressController.text = formattedAddress;
+                          AdminController.cityController.text = locality ?? '';
+                          AdminController.stateController.text = administrativeArea ?? '';
+                          AdminController.pinController.text = postalCode ?? '';
+
+                          // Optionally store full data in JSON for reference
+                          AdminController.addressController.text = formattedAddress; // Only building, street, landmark
+                        } else if (position != null) {
+                          AdminController.addressController.text = "lat: ${position.latitude}, lng: ${position.longitude}";
+                          AdminController.cityController.text = '';
+                          AdminController.stateController.text = '';
+                          AdminController.pinController.text = '';
+                        }
+                      } catch (e) {
+                        debugPrint("Error fetching address: $e");
+                      } finally {
+                        OverlayLoadingProgress.stop();
                       }
-                      OverlayLoadingProgress.stop();
                     },
                     placeHolderText: "Select Location",
                     suffix: Icon(Icons.arrow_drop_down_sharp),
-                    textController:AdminController.addressController,
+                    textController: AdminController.addressController,
                     title: "Address",
-                    validator: (String ? data){
-                      if(data?.isEmpty??true){
+                    validator: (String? data) {
+                      if (data?.isEmpty ?? true) {
                         return "Please Select Address";
                       }
+                      return null;
                     },
                   ),
+
+
                   if(!manualLocationOff)    10.height(),
                   if(!manualLocationOff)     CustomTextField(textController: AdminController.addressController,
                     title: "Address",
@@ -335,12 +409,11 @@ if(!"$data".isValidWebsite()){
 
                   10.height(),
 
-
-
                 ],),
             ),
           ),
         ),
+
 
         CustomButton(buttonText:
         "Submit",
@@ -353,24 +426,20 @@ if(!"$data".isValidWebsite()){
               businessDataModel. businessType=AdminController.vendorType.text ;
               businessDataModel. businessRegistrationName=AdminController.businessNameController.text;
               businessDataModel.  constitution=AdminController.constitutionController.text;
-
-
-
               BusinessProfileData.getProfilePhoneOrEmail().isPhone?  businessDataModel.email=
               AdminController.phoneOrEmailController.text:businessDataModel.phoneNo=AdminController.phoneOrEmailController.text;
-
-
-
               businessDataModel.  website= AdminController.websiteController.text;
               businessDataModel.    address= AdminController.addressController.text;
               businessDataModel. state=AdminController.stateController.text;
               businessDataModel. city= AdminController.cityController.text;
               businessDataModel. pinCode= AdminController.pinController.text;
-
               businessDataModel.   country= "INDIA";
               saveDetailsBloc.add(SaveBusinessDetailsEvent(businessData:businessDataModel,
               vendorId: businessDataModel.vendorId??""));
-            }),
+
+            }
+
+            ),
         10.height(),
 
 

@@ -231,6 +231,7 @@ screen++;
                 listener: (BuildContext context,HiveState state){
                   if(state is HiveGetBusinessKycState){
                     KycController.businessName.text=state.businessKycModel.businessRegistrationName??'';
+                    KycController.businessDescription.text = state.businessKycModel.businessDescription ??'';
                     KycController.constitution.text=state.businessKycModel.constitution??'';
                     KycController.gst.text=state.businessKycModel.gstNumber??'';
                     KycController.panCard.text=state.businessKycModel.panCard??'';
@@ -314,6 +315,8 @@ return imageModelList;
       pubCafeFineDinningName: KycController.vendorName.text,
 
       businessRegistrationName:KycController.businessName.text,
+      businessDescription: KycController.businessDescription.text,
+
       constitution:KycController.constitution.text,
       gstIn: KycController.gst.text,
       panCardNumber:KycController.panCard.text,

@@ -2,6 +2,7 @@ class AllKycModel {
   String? vendorData;
   String? pubCafeFineDinningName;
   String? businessRegistrationName;
+  String? businessDescription;
   String? constitution;
   String? gstIn;
   String? panCardNumber;
@@ -22,6 +23,7 @@ class AllKycModel {
       {this.vendorData,
         this.pubCafeFineDinningName,
         this.businessRegistrationName,
+        this.businessDescription,
         this.constitution,
         this.gstIn,
         this.panCardNumber,
@@ -44,6 +46,7 @@ class AllKycModel {
     vendorData = json['vendor_data'];
     pubCafeFineDinningName = json['pub_cafe_fine_dinning_name'];
     businessRegistrationName = json['business_registration_name'];
+    businessDescription = json['pub_cafe_fine_dinning_description'];
     constitution = json['constitution'];
     gstIn = json['gst_in'];
     panCardNumber = json['pan_card_number'];
@@ -64,6 +67,7 @@ class AllKycModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['vendor_data'] = this.vendorData;
     data['pub_cafe_fine_dinning_name'] = this.pubCafeFineDinningName;
+    data['pub_cafe_fine_dinning_description'] = this.businessDescription;
     data['business_registration_name'] = this.businessRegistrationName;
     data['constitution'] = this.constitution;
     data['gst_in'] = this.gstIn;

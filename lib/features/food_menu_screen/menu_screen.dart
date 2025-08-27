@@ -22,7 +22,8 @@ class _MenuScreenState extends State<MenuScreen> {
   FoodMenuBloc foodMenuBloc=FoodMenuBloc();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
       title: Text("Food Menu"),
 
     ),
@@ -67,23 +68,14 @@ class _MenuScreenState extends State<MenuScreen> {
 
                 if(state is FoodSuccessState)
                 {
-
                  showSuccessAlert(context: context, title: "Menu Uploaded",
                  callBack: (){
                    context.pop();
                    context.pop();
                  });
-
-
-
-
                 }else if(state is FoodErrorState){
                   showAlert(context, state.errorMsg);
                 }
-
-
-
-
             },child: SizedBox.shrink(),),
 
             40.height(),
@@ -126,7 +118,6 @@ class _MenuScreenState extends State<MenuScreen> {
           ],),
       ),
     ),
-
     );
   }
 }

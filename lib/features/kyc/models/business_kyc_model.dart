@@ -1,11 +1,13 @@
 class BusinessKycModel{
   final String? businessRegistrationName,
-  constitution,
+  constitution, businessDescription,
   gstNumber,panCard,fssaiLicense,vendorName;
   int ?businessType;
+
   BusinessKycModel({
      this.constitution,
     this.businessRegistrationName,
+    this.businessDescription,
     this.businessType,
     this.fssaiLicense,
     this.gstNumber,
@@ -17,6 +19,7 @@ class BusinessKycModel{
    return BusinessKycModel(
        businessType:mapData['businessType']
        ,businessRegistrationName:mapData['businessRegistrationName'],
+       businessDescription: mapData['businessDescription'],
        constitution:mapData['constitution'],
        gstNumber:mapData['gstNumber'],
        panCard:mapData['panCard'],
@@ -28,6 +31,7 @@ class BusinessKycModel{
  Map<String,dynamic> toJson(){
    return {"businessType":businessType,
    "businessRegistrationName":businessRegistrationName,
+     "businessDescription": businessDescription,
      "constitution":constitution,
      "gstNumber":gstNumber,"panCard":panCard,
    "fssaiLicense":fssaiLicense,

@@ -6,6 +6,7 @@ import 'package:new_pubup_partner/features/event/event_show/views/event_viewer.d
 import 'package:new_pubup_partner/features/event/model/EventPostModel.dart';
 import 'package:new_pubup_partner/features/event/update_event/update_event.dart';
 import 'package:new_pubup_partner/features/notification_screen/notification_screen.dart';
+import 'package:new_pubup_partner/features/pub_cafe_gallery_screen/pub_cafe_gallery_screen.dart';
 import 'package:new_pubup_partner/features/web_view/web_view.dart';
 import 'package:new_pubup_partner/ticket_validator/ticket_validator.dart';
 import '../features/admin_details/view/business_details.dart';
@@ -45,6 +46,7 @@ static const String showEventScreen="/showEventScreen";
   static const String allBooking="/allBooking";
   static const String menuScreen="/menuScreen";
   static const String myWebView="/mywebView";
+  static const String pubCafeGallery = '/pubCafeGallery';
   static const String editProfile="/editProfile";
   static const String updateEventScreen="/updateEventScreen";
   static const String ticketValidator="/ticketValidator";
@@ -94,6 +96,9 @@ static const String showEventScreen="/showEventScreen";
             settings: settings);
       case menuScreen:
         return CustomPageRoute(builder: (_)=>MenuScreen(),
+            settings: settings);
+      case pubCafeGallery:
+        return CustomPageRoute(builder: (_)=>PubCafeGalleryScreen(),
             settings: settings);
       case myWebView:
         return CustomPageRoute(builder: (_)=>MyWebView(),
