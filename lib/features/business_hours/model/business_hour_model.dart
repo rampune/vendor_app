@@ -43,50 +43,23 @@ class BusinessHourData {
 class OperationalTime {
   String? day;
   bool? isopen;
-  List<Slot>? slot;
+  // List<Slot>? slot;
+  String? slot;
 
   OperationalTime({this.day, this.isopen, this.slot});
 
   OperationalTime.fromJson(Map<String, dynamic> json) {
     day = json['day'];
     isopen = json['isopen'];
-    if (json['slot'] != null) {
-      slot = <Slot>[];
-      json['slot'].forEach((v) {
-        slot!.add(new Slot.fromJson(v));
-      });
-    }
+    slot = json['slot'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['day'] = this.day;
     data['isopen'] = this.isopen;
-    if (this.slot != null) {
-      data['slot'] = this.slot!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
 
-class Slot {
-  String? startTime;
-  String? endTime;
-  String? slotName;
-
-  Slot({this.startTime, this.endTime, this.slotName});
-
-  Slot.fromJson(Map<String, dynamic> json) {
-    startTime = json['start_time'];
-    endTime = json['end_time'];
-    slotName = json['slot_name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['start_time'] = this.startTime;
-    data['end_time'] = this.endTime;
-    data['slot_name'] = this.slotName;
+    data['slot'] = this.slot;
     return data;
   }
 }
@@ -94,28 +67,21 @@ class Slot {
 class OperationalDate {
   String? date;
   bool? isopen;
-  List<Slot>? slot;
+  String? slot;
 
   OperationalDate({this.date, this.isopen, this.slot});
 
   OperationalDate.fromJson(Map<String, dynamic> json) {
     date = json['date'];
     isopen = json['isopen'];
-    if (json['slot'] != null) {
-      slot = <Slot>[];
-      json['slot'].forEach((v) {
-        slot!.add(new Slot.fromJson(v));
-      });
-    }
+    slot = json['slot'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['date'] = this.date;
     data['isopen'] = this.isopen;
-    if (this.slot != null) {
-      data['slot'] = this.slot!.map((v) => v.toJson()).toList();
-    }
+    data['slot'] = this.slot;
     return data;
   }
 }

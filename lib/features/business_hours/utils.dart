@@ -1,36 +1,46 @@
+
+//Saransh new code
 import 'package:intl/intl.dart';
-import 'package:new_pubup_partner/features/business_hours/model/business_hour_model.dart';
+import 'package:new_pubup_partner/config/common_functions.dart';
+class BusinessHourUtils {
+  static String? currentSlot; // Store a single slot string instead of a list
 
-import '../../config/common_functions.dart';
+  static bool addToSlot(String slot) {
+    if (currentSlot != null) {
+      showToast("⚠ Only one slot is allowed. Replace the existing slot?");
+      return false; // Prevent adding if a slot already exists
+    }
 
-class BusinessHourUtils{
-  static List<Slot> listSlot=[];
-  static addToSlotList(Slot slot){
+    // Validate the slot format (e.g., "11:00 - 23:00")
+    RegExp slotPattern = RegExp(r'^\d{2}:\d{2}\s*-\s*\d{2}:\d{2}$');
+    if (!slotPattern.hasMatch(slot)) {
+      showToast("⚠ Invalid slot format. Use 'HH:mm - HH:mm'");
+      return false;
+    }
 
+    // Parse the slot string
+    try {
       DateFormat format = DateFormat("HH:mm");
+      var times = slot.split('-').map((e) => e.trim()).toList();
+      DateTime startTime = format.parse(times[0]);
+      DateTime endTime = format.parse(times[1]);
 
-      // Parse the new slot's start and end times
-      DateTime newStart = format.parse(slot.startTime ?? "00:00");
-      DateTime newEnd = format.parse(slot.endTime ?? "00:00");
-
-      // Loop through existing slots
-      for (int index = 0; index < listSlot.length; index++) {
-        Slot existing = listSlot[index];
-
-        DateTime existStart = format.parse(existing.startTime ?? "00:00");
-        DateTime existEnd = format.parse(existing.endTime ?? "00:00");
-
-        // Check overlap: newStart < existEnd && newEnd > existStart
-        if (newStart.isBefore(existEnd) && newEnd.isAfter(existStart)) {
-          showToast("⚠ Slot overlaps with existing slot: ${existing.startTime} - ${existing.endTime}");
-          return; // Stop, don't add
-        }
+      // Validate time range
+      if (startTime.isAfter(endTime) || startTime.isAtSameMomentAs(endTime)) {
+        showToast("⚠ Start time must be before end time");
+        return false;
       }
 
-      // If no overlap, add to list
-      listSlot.add(slot);
-      showToast("✅ Slot added: ${slot.startTime} - ${slot.endTime}");
+      currentSlot = slot; // Store the slot
+      showToast("✅ Slot added: $slot");
+      return true;
+    } catch (e) {
+      showToast("⚠ Error parsing slot times");
+      return false;
+    }
+  }
 
-
+  static void clearSlot() {
+    currentSlot = null; // Clear the slot
   }
 }

@@ -1,63 +1,226 @@
-import 'dart:math';
+
+//Saransh new code
 
 import 'package:flutter/material.dart';
-import 'package:new_pubup_partner/config/config.dart';
-import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/config/theme.dart';
 import 'package:new_pubup_partner/features/business_hours/widgets/working_hours_bottom_sheet_widget.dart';
+
+import '../bloc/business_hour_bloc.dart'; // Assuming AppColors is defined here
+
 class WorkingHourTile extends StatelessWidget {
-  const WorkingHourTile({super.key,
-  required this.day,this.onTap,this.isOn,this.subTitle,this.leadingCallBack});
-final String day;
-final GestureTapCallback? onTap;
-final String? subTitle;
-final bool?isOn;
-final GestureTapCallback? leadingCallBack;
+  final String day;
+  final String subTitle;
+  final bool isOn;
+  final String? slotTime; // Slot string in format "HH:mm - HH:mm"
+  final VoidCallback leadingCallBack; // Kept for compatibility, but unused
+  final VoidCallback onTap;
+
+  final BusinessHourBloc businessHourBloc;
+
+  const WorkingHourTile({
+    super.key,
+    required this.day,
+    required this.subTitle,
+    required this.isOn,
+    required this.slotTime,
+    required this.leadingCallBack,
+    required this.onTap,
+
+    required this.businessHourBloc
+  });
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: InkWell(
-        onTap: leadingCallBack,
-        child: Icon(Icons.arrow_drop_down_sharp,size: 35,
-        color: isDark(context)?AppColors.darkGray:null,
+    // Parse slotTime to extract start and end times
+    String? startTime;
+    String? endTime;
+    if (slotTime != null) {
+      try {
+        var times = slotTime!.split('-').map((e) => e.trim()).toList();
+        if (times.length == 2) {
+          startTime = times[0];
+          endTime = times[1];
+        }
+      } catch (e) {
+        debugPrint('Error parsing slotTime: $e');
+        startTime = null;
+        endTime = null;
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.black),
+      ),
+      child: ExpansionTile(
+        leading: Icon(Icons.keyboard_arrow_down),
+        title: Row(
+          children: [
+            Text(
+              day,
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500),
+            ),
+            Spacer(),
+            Text(
+              subTitle,
+              style: TextStyle(
+                color: subTitle == 'Open' ? Colors.green : Colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w500
+              ),
+            ),
+          ],
         ),
+        trailing: Switch(
+          value: isOn,
+          onChanged: (value) => onTap(),
+          activeColor: Colors.green,
+          activeTrackColor: Colors.green[400],
+          inactiveThumbColor: Colors.red,
+          inactiveTrackColor: Colors.grey[300],
+        ),
+        children: [
+          if (slotTime != null && startTime != null && endTime != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.themeColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Text(
+                            'Start Time',
+                            style: TextStyle(fontSize: 12, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      GestureDetector(
+
+                        onTap: () {
+                          // Open BottomSheetWidget to edit start time
+                          showModalBottomSheet(
+                            backgroundColor: AppColors.transparent,
+                            context: context,
+                            builder: (_) {
+                              return BottomSheetWidget(
+                                businessHourBloc: businessHourBloc,  // Replace with actual bloc instance
+                                day: day,
+                                isOpen: isOn,
+                                isPostRequest: false,
+                                slotTime: slotTime,
+                                isEditMode: true,
+                              );
+                            },
+                          );
+                        },
+
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.black
+                              ),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Text(
+                                  startTime,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                                ),
+                                Icon(Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.themeColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Text(
+                            'End Time',
+                            style: TextStyle(fontSize: 12, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      GestureDetector(
+                        onTap: (){
+                          // Open BottomSheetWidget to edit start time
+                          showModalBottomSheet(
+                            backgroundColor: AppColors.transparent,
+                            context: context,
+                            builder: (_) {
+                              return BottomSheetWidget(
+                                businessHourBloc: businessHourBloc,  // Replace with actual bloc instance
+                                day: day,
+                                isOpen: isOn,
+                                isPostRequest: false,
+                                slotTime: slotTime,
+                                isEditMode: true,
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black
+                            ),
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            child: Row(
+                              children: [
+                                Text(
+                                  endTime,
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                                ),
+                                Icon(Icons.keyboard_arrow_down)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No operating hours defined',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+            ),
+        ],
       ),
-      trailing: InkWell(
-          onTap: onTap,
-          child: OnOFFs(isON: isOn??false,)),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: AppColors.darkGray,),
-        borderRadius: BorderRadius.circular(10)
-
-      ),
-      title: Text(day,style: context.titleSmall()?.copyWith(
-        fontWeight: FontWeight.bold
-      ),),
-      // subtitle: Text("---- ",style: context.bodySmall()?.copyWith(
-      //   color: AppColors.darkGray
-      // ),),
-
-
     );
-  }
-}
-class OnOFFs extends StatefulWidget {
-  const OnOFFs({super.key,required this.isON});
-  final bool isON;
-
-  @override
-  State<OnOFFs> createState() => _OnOFFsState();
-}
-
-class _OnOFFsState extends State<OnOFFs> {
-
-  List<Icon> iconList=[Icon(Icons.toggle_on_outlined,size: 50,
-  color: AppColors.green,
-  ),Icon(Icons.toggle_off_outlined,size: 50,color: AppColors.red,)];
-  @override
-  Widget build(BuildContext context) {
-    return  SizedBox(
-      height: 50,
-      child: widget.isON?iconList[0]:iconList[1],);
   }
 }

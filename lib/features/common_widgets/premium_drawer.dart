@@ -4,6 +4,7 @@ import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/config/routes.dart';
 import 'package:new_pubup_partner/config/theme.dart';
 import 'package:new_pubup_partner/data/source/local/global_data/profile_data.dart';
+import 'package:new_pubup_partner/data/source/network/end_points.dart';
 import '../../config/config.dart';
 class PremiumAnimatedDrawer extends StatefulWidget {
   final Function() onClose;
@@ -136,6 +137,16 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
                 Text("${BusinessProfileData.vendorId()}", style: context.bodySmall()?.copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
+          ),
+          InkWell(
+            onTap: (){
+
+              Navigator.pushNamed(
+                  context, AppRoutes.vendorProfileScreen,
+                arguments:BusinessProfileData.vendorId(),
+              );
+            },
+              child: Icon(Icons.arrow_forward_ios_outlined)
           ),
           10.width()
         ],

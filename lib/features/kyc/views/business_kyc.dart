@@ -88,7 +88,7 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
             CustomTextField(textController: KycController.businessDescription,
               title: "Business Description",
               validator: (String? data){
-                if("$data".length<50){
+                if("$data".length<500){
 
                 }else{
                   return "Enter Valid Business Description";

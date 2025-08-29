@@ -303,7 +303,7 @@ if(!"$data".isValidWebsite()){
 
                         // Combine building, landmark, and street for address field
                         String formattedAddress = [
-                          name ?? '',
+                          // name ?? '',
                           street ?? '',
                           subLocality ?? '',
                         ].where((element) => element.isNotEmpty).join(', ');

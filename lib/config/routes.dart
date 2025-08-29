@@ -7,6 +7,7 @@ import 'package:new_pubup_partner/features/event/model/EventPostModel.dart';
 import 'package:new_pubup_partner/features/event/update_event/update_event.dart';
 import 'package:new_pubup_partner/features/notification_screen/notification_screen.dart';
 import 'package:new_pubup_partner/features/pub_cafe_gallery_screen/pub_cafe_gallery_screen.dart';
+import 'package:new_pubup_partner/features/vendor_profile_screen/vendor_profile_screen.dart';
 import 'package:new_pubup_partner/features/web_view/web_view.dart';
 import 'package:new_pubup_partner/ticket_validator/ticket_validator.dart';
 import '../features/admin_details/view/business_details.dart';
@@ -50,6 +51,7 @@ static const String showEventScreen="/showEventScreen";
   static const String editProfile="/editProfile";
   static const String updateEventScreen="/updateEventScreen";
   static const String ticketValidator="/ticketValidator";
+  static const String vendorProfileScreen = '/vendorProfileScreen';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
  case splashScreen:
@@ -94,6 +96,11 @@ static const String showEventScreen="/showEventScreen";
       case allBooking:
         return CustomPageRoute(builder: (_)=>AllBookings(),
             settings: settings);
+
+      case vendorProfileScreen:
+        return CustomPageRoute(builder: (_)=>VendorProfileScreen(vendorId:settings.arguments as String),
+            settings: settings);
+
       case menuScreen:
         return CustomPageRoute(builder: (_)=>MenuScreen(),
             settings: settings);
