@@ -82,8 +82,6 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
               },
             ),
 
-
-
             20.height(),
             CustomTextField(textController: KycController.businessDescription,
               title: "Business Description",

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:new_pubup_partner/data/source/network/end_points.dart';
 import 'package:new_pubup_partner/features/common_widgets/custom_button.dart';
 import 'package:new_pubup_partner/features/vendor_profile_screen/state/vendor_all_details_state.dart';
 
@@ -20,127 +21,8 @@ VendorProfileScreen({super.key,required this.vendorId});
       appBar: AppBar(
         title: const Text(
           "Profile",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
         ),
-        backgroundColor: Colors.yellow[700], // Matches the yellow app bar
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
       ),
-
-      // body: ListView(
-      //   padding: const EdgeInsets.all(16.0),
-      //   children: [
-      //     ListTile(
-      //       leading: const CircleAvatar(
-      //         backgroundColor: Colors.grey,
-      //         child: Icon(Icons.person, color: Colors.white),
-      //       ),
-      //       title: const Text(
-      //         "Maxgen Pvt. Ltd.",
-      //         style: TextStyle(fontWeight: FontWeight.bold),
-      //       ),
-      //       subtitle: const Text("+91 9879722455"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.edit, color: Colors.blue),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("About"),
-      //       subtitle: const Text("A cozy pub & cafe with good ambiance"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Owner E-Mail ID"),
-      //       subtitle: const Text("komalmagen@gmail.com"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Website"),
-      //       subtitle: const Text("www.maxgenttechnologies.com"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Operational Hours"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Menu"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Gallery"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("About PubUp"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Privacy Policy"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const Divider(),
-      //     ListTile(
-      //       title: const Text("Term & Conditions"),
-      //       trailing: IconButton(
-      //         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-      //         onPressed: () {},
-      //       ),
-      //     ),
-      //     const SizedBox(height: 20),
-      //
-      //
-      //
-      //     CustomButton(buttonText: 'Logout', onPress: (){
-      //
-      //     })
-      //   ],
-      // ),
-
-
-
-
 
         body: BlocBuilder<VendorAllDetailsBloc, VendorAllDetailsState>(
           builder: (context, state) {
@@ -151,29 +33,64 @@ VendorProfileScreen({super.key,required this.vendorId});
             } else if (state is VendorAllDetailsSuccessState) {
               final vendor = state.vendorAllDetailsData;
 
-
              return ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundColor: Colors.grey,
-                        child: Icon(Icons.person, color: Colors.white),
+                        radius: 24, // Adjust size as needed
+                        child: vendor.vendorDetails?.logo != null &&
+                            vendor.vendorDetails!.logo!.isNotEmpty
+                            ? ClipOval(
+                          child: Image.network(
+                            '${EndPoints.baseUrl}${vendor.vendorDetails!.logo!}',
+                            fit: BoxFit.cover,
+                            width: 48, // Match CircleAvatar size
+                            height: 48,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Fallback for invalid or failed image load
+                              return const Icon(
+                                Icons.store,
+                                color: Colors.white,
+                                size: 24,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const CircularProgressIndicator(
+                                strokeWidth: 2,
+                              );
+                            },
+                          ),
+                        )
+                            : const Icon(
+                          Icons.store,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                       ),
-                      title:  Text(
-                        vendor.businessRegistrationName!,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      title: Text(
+                        vendor.businessRegistrationName ?? 'Unknown Business',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(vendor.phoneNo!),
+                      subtitle: Text(vendor.phoneNo ?? 'No phone number'),
                       trailing: IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {},
+                        onPressed: () {
+                          // Navigate to edit screen or handle edit logic
+                        },
                       ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("About"),
-                      subtitle:  Text(vendor.vendorDetails?.pubCafeFineDinningDescription ?? ''),
+                      subtitle: Text(
+                        vendor.vendorDetails?.pubCafeFineDinningDescription != null &&
+                            vendor.vendorDetails!.pubCafeFineDinningDescription!.length > 150
+                            ? '${vendor.vendorDetails!.pubCafeFineDinningDescription!.substring(0, 150)}...'
+                            : vendor.vendorDetails?.pubCafeFineDinningDescription ?? 'No description',
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
                         onPressed: () {},
@@ -222,29 +139,7 @@ VendorProfileScreen({super.key,required this.vendorId});
                       ),
                     ),
                     const Divider(),
-                    ListTile(
-                      title: const Text("About PubUp"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      title: const Text("Privacy Policy"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      title: const Text("Term & Conditions"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
-                    ),
+
                     const SizedBox(height: 20),
 
 
@@ -254,15 +149,10 @@ VendorProfileScreen({super.key,required this.vendorId});
                     })
                   ],
                 );
-
-
-
               }
             return Container(); // Default case
           },
         ),
-
-
 
     )
 

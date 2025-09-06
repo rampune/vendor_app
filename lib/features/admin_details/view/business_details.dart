@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -239,8 +237,6 @@ if(!"$data".isValidWebsite()){
                   10.height(),
 
 
-
-
                   ///AmraRam old Code
                   // if(manualLocationOff)    CustomTextField(
                   //
@@ -275,72 +271,77 @@ if(!"$data".isValidWebsite()){
                   //   },
                   // ),
 
-
                   ///Saransh new code
                   if(manualLocationOff)
                     CustomTextField(
-                    focusColor: AppColors.darkGray,
-                    readOnly: true,
-                    onTap: () async {
-                      OverlayLoadingProgress.start(context);
-                      try {
-                        // Get the current position
-                        Position? position = await LocationService().getPosition(context, timeoutSecond: 30);
-                        double lat = position?.latitude ?? 0.0;
-                        double lng = position?.longitude ?? 0.0;
+                      focusColor: AppColors.darkGray,
+                      readOnly: true,
+                      onTap: () async {
+                        OverlayLoadingProgress.start(context);
+                        try {
+                          // Get the current position
+                          Position? position = await LocationService().getPosition(context, timeoutSecond: 40);
+                          if (position == null) {
+                            debugPrint("Failed to get position");
 
-                        // Fetch detailed address using geocoding package
-                        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng).timeout(Duration(seconds: 20));
-                        Placemark placemark = placemarks.first;
+                            return;
+                          }
+                          double lat = position.latitude;
+                          double lng = position.longitude;
 
-                        // Extract address components
-                        String? street = placemark.street;
-                        String? locality = placemark.locality; // City
-                        String? administrativeArea = placemark.administrativeArea; // State
-                        String? postalCode = placemark.postalCode; // Pincode
-                        String? subLocality = placemark.subLocality; // Landmark or neighborhood
-                        String? name = placemark.name; // Building or specific place name
+                          // Fetch detailed address
+                          List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng).timeout(
+                            const Duration(seconds: 20),
+                            onTimeout: () {
+                              debugPrint("Geocoding timed out");
+                              return [];
+                            },
+                          );
 
-                        // Combine building, landmark, and street for address field
-                        String formattedAddress = [
-                          // name ?? '',
-                          street ?? '',
-                          subLocality ?? '',
-                        ].where((element) => element.isNotEmpty).join(', ');
+                          if (placemarks.isNotEmpty) {
+                            Placemark placemark = placemarks.first;
+                            String? street = placemark.street;
+                            String? locality = placemark.locality ?? placemark.name; // Fallback to name if locality is null
+                            String? administrativeArea = placemark.administrativeArea;
+                            String? postalCode = placemark.postalCode;
+                            String? subLocality = placemark.subLocality;
+                            String? name = placemark.name;
 
-                        // Update controllers
-                        if (formattedAddress.isNotEmpty) {
-                          AdminController.addressController.text = formattedAddress;
-                          AdminController.cityController.text = locality ?? '';
-                          AdminController.stateController.text = administrativeArea ?? '';
-                          AdminController.pinController.text = postalCode ?? '';
+                            // Combine address components with fallbacks
+                            String formattedAddress = [
+                              name ?? street ?? 'Unknown',
+                              subLocality ?? '',
+                            ].where((element) => element.isNotEmpty).join(', ');
 
-                          // Optionally store full data in JSON for reference
-                          AdminController.addressController.text = formattedAddress; // Only building, street, landmark
-                        } else if (position != null) {
-                          AdminController.addressController.text = "lat: ${position.latitude}, lng: ${position.longitude}";
-                          AdminController.cityController.text = '';
-                          AdminController.stateController.text = '';
-                          AdminController.pinController.text = '';
+                            // Update controllers
+                            AdminController.addressController.text = formattedAddress;
+                            AdminController.cityController.text = locality ?? '';
+                            AdminController.stateController.text = administrativeArea ?? '';
+                            AdminController.pinController.text = postalCode ?? '';
+
+                          } else {
+                            debugPrint("No placemarks found for coordinates: $lat, $lng");
+                            AdminController.addressController.text = "Unable to fetch address";
+
+                          }
+                        } catch (e) {
+                          debugPrint("Error fetching address: $e");
+
+                        } finally {
+                          OverlayLoadingProgress.stop();
                         }
-                      } catch (e) {
-                        debugPrint("Error fetching address: $e");
-                      } finally {
-                        OverlayLoadingProgress.stop();
-                      }
-                    },
-                    placeHolderText: "Select Location",
-                    suffix: Icon(Icons.arrow_drop_down_sharp),
-                    textController: AdminController.addressController,
-                    title: "Address",
-                    validator: (String? data) {
-                      if (data?.isEmpty ?? true) {
-                        return "Please Select Address";
-                      }
-                      return null;
-                    },
-                  ),
-
+                      },
+                      placeHolderText: "Select Location",
+                      suffix: const Icon(Icons.arrow_drop_down_sharp),
+                      textController: AdminController.addressController,
+                      title: "Address",
+                      validator: (String? data) {
+                        if (data?.isEmpty ?? true) {
+                          return "Please Select Address";
+                        }
+                        return null;
+                      },
+                    ),
 
                   if(!manualLocationOff)    10.height(),
                   if(!manualLocationOff)     CustomTextField(textController: AdminController.addressController,
@@ -407,6 +408,9 @@ if(!"$data".isValidWebsite()){
                     )),
                   ],),
 
+
+
+
                   10.height(),
 
                 ],),
@@ -450,3 +454,10 @@ if(!"$data".isValidWebsite()){
   }
 
 }
+
+
+
+
+
+
+
