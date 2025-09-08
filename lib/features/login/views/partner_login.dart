@@ -81,11 +81,6 @@ static List<PartnerLoginModel> partnerLoginModel=[PartnerLoginModel
           ),
 
 
-
-
-
-
-
           Container(
             padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
             decoration: BoxDecoration(color: AppColors.black),
@@ -96,10 +91,10 @@ static List<PartnerLoginModel> partnerLoginModel=[PartnerLoginModel
           Navigator.pushNamed(context, AppRoutes.mobileLoginScreen);
                 },backgroundColor: dynamicThemeColor(context),),
                 20.height(),
-                SuffixIconButton(title: "Partner with PubUp", onTap: (){
-
-                }),
-                20.height(),
+                // SuffixIconButton(title: "Partner with PubUp", onTap: (){
+                //
+                // }),
+                // 20.height(),
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "By continuing, you agree with our\n",
                   style: context.bodySmall()?.copyWith(

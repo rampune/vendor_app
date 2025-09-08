@@ -58,21 +58,43 @@ bool isTicketFree=false;
                 )).toList(),
               ),
               10.height(),
-              CustomDropDown(controller: EventController.ticketType,
-                  heading: "Ticket Type",
-                  title: "Ticket Type 1",
-                  validator: (String? data){
-                if(data?.isEmpty??true){
-                  return "Choose Ticket type";
-                }
-                  },
-                  listCustomDropDownModel:ticketType.map((item)=>
-                      CustomDropDownModel(name: item,)).toList(),
 
 
-                  onSelect: (CustomDropDownModel selected){
 
-                  }),
+              ///Amara ram old code with dropdown
+              // CustomDropDown(controller: EventController.ticketType,
+              //     heading: "Ticket Type",
+              //     title: "Ticket Type 1",
+              //     validator: (String? data){
+              //   if(data?.isEmpty??true){
+              //     return "Choose Ticket type";
+              //   }
+              //     },
+              //     listCustomDropDownModel:ticketType.map((item)=>
+              //         CustomDropDownModel(name: item,)).toList(),
+              //
+              //
+              //     onSelect: (CustomDropDownModel selected){
+              //
+              //     }),
+
+
+              ///Saransh new code with with text field
+              CustomTextField(
+                validator: (String? data){
+                  if(data?.isEmpty??true){
+                    return "Enter Type";
+                  }
+                },
+                textController: EventController.ticketType,
+                title: "Ticket Type",
+                placeHolderText: "e.g Single, double",
+
+              ),
+
+
+
+
               10.height(),
               CustomTextField(
                 validator: (String? data){
@@ -130,11 +152,13 @@ bool isTicketFree=false;
                 backgroundColor: AppColors.black,
                 onPressed: (){
           if(EventController.booking2FormKey.currentState?.validate()??false){
-            if(ticketType.contains("${EventController.ticketType.text}")){
-              EventController.listTickets= EventController.listTickets.where((ticket)=>ticket.ticketType!="${EventController.ticketType.text}").toList();
-            }
+            // if(ticketType.contains("${EventController.ticketType.text}")){
+            //   EventController.listTickets= EventController.listTickets.where((ticket)=>ticket.ticketType!="${EventController.ticketType.text}").toList();
+            // }
+
+
             setState(() {
-          TicketModel ticketModel=    TicketModel(ticketType:
+          TicketModel ticketModel= TicketModel(ticketType:
               EventController.ticketType.text,
                   price:isTicketFree?0:stringToInt(EventController.ticketPrice.text,
                   ),

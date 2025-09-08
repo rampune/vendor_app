@@ -77,9 +77,6 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
                       _buildDrawerItem(context, icon: Icons.info_outline,
                           title: 'About Pubup', route: AppRoutes.myWebView),
 
-
-
-
                       _buildDrawerItem(context, icon: Icons.lock, title: 'Privacy Policy', route: AppRoutes.myWebView),
 
                       _buildDrawerItem(context, icon: Icons.menu_book_rounded, title: 'Term & Conditions', route: AppRoutes.myWebView),

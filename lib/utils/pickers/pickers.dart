@@ -45,39 +45,82 @@ class AppPickers {
 
 
 
+/// Old code of Amra Ram
+//   static Future<String?> timePicker(BuildContext context,{TimeOfDay?startTime}) async {
+//    TimeOfDay timeOfDay= TimeOfDay.now();
+//   final TimeOfDay? pickedTime = await showTimePicker(
+//   context: context,
+//   initialTime: startTime??timeOfDay,
+//   builder: (BuildContext context, Widget? child) {
+//     return MediaQuery(
+//       data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+//       child: _timePickerTheme(context, child),
+//     );
+//   },
+//   );
+// if(startTime!=null){
+//   if(((startTime.hour*60)+startTime.minute)>((pickedTime?.hour??0)*60+(pickedTime?.minute??0))){
+//     showToast("select after start time");
+//     return null;
+//   }
+//
+// }
+//   if (pickedTime == null) {
+//   return null;
+//   }
+//
+//   final now = DateTime.now();
+//   final formattedTime = DateFormat('HH:mm').format(
+//   DateTime(now.year, now.month, now.day, pickedTime.hour, pickedTime.minute),
+//   );
+//
+//
+//
+//   return formattedTime;
+//   }
 
+
+
+  ///New code of Saransh Shukla
   static Future<String?> timePicker(BuildContext context,{TimeOfDay?startTime}) async {
-   TimeOfDay timeOfDay= TimeOfDay.now();
-  final TimeOfDay? pickedTime = await showTimePicker(
-  context: context,
-  initialTime: startTime??timeOfDay,
-  builder: (BuildContext context, Widget? child) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-      child: _timePickerTheme(context, child),
+    TimeOfDay timeOfDay= TimeOfDay.now();
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: startTime??timeOfDay,
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: _timePickerTheme(context, child),
+        );
+      },
     );
-  },
-  );
-if(startTime!=null){
-  if(((startTime.hour*60)+startTime.minute)>((pickedTime?.hour??0)*60+(pickedTime?.minute??0))){
-    showToast("select after start time");
-    return null;
+    if(startTime!=null && pickedTime != null){
+      int startMinutes = (startTime.hour * 60) + startTime.minute;
+      int pickedMinutes = (pickedTime.hour * 60) + pickedTime.minute;
+      if (pickedMinutes < startMinutes) {
+        // Assume wrap-around to next day
+        pickedMinutes += 24 * 60;
+      }
+      if (pickedMinutes <= startMinutes) {
+        showToast("select after start time");
+        return null;
+      }
+    }
+    if (pickedTime == null) {
+      return null;
+    }
+
+    final now = DateTime.now();
+    final formattedTime = DateFormat('HH:mm').format(
+      DateTime(now.year, now.month, now.day, pickedTime.hour, pickedTime.minute),
+    );
+
+
+
+    return formattedTime;
   }
 
-}
-  if (pickedTime == null) {
-  return null;
-  }
 
-  final now = DateTime.now();
-  final formattedTime = DateFormat('HH:mm').format(
-  DateTime(now.year, now.month, now.day, pickedTime.hour, pickedTime.minute),
-  );
-
-
-
-  return formattedTime;
-  }
 
   static _timePickerTheme(context,child){
     return  Theme(
