@@ -77,7 +77,6 @@ class _EditProfileState extends State<EditProfile> {
                textAlign: TextAlign.center,
                   style: context.titleSmall()?.copyWith(
                     fontWeight: FontWeight.bold,
-
                   ),
                 ),
               );
