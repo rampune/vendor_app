@@ -62,15 +62,9 @@ print("amra009\n\n\n${apiResult?.data} ${apiResult?.statusCode} ${apiResult?.mes
             emit(EventPostErrorState(errorMsg: "---0009$exception"));
           }
 
-
-
-
-
-
         }
 
       }
-
 
     }
   }

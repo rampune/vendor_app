@@ -75,12 +75,6 @@ VendorProfileScreen({super.key,required this.vendorId});
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(vendor.phoneNo ?? 'No phone number'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          // Navigate to edit screen or handle edit logic
-                        },
-                      ),
                     ),
                     const Divider(),
                     ListTile(

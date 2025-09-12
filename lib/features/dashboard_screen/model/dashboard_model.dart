@@ -25,10 +25,13 @@ class DashboardModel{
      path: "newEvent",
    ),
 
+
+
    DashboardModel(
      iconData: Icons.book_online_rounded, // 📖 All Bookings
      title: "All Bookings",
-     path: AppRoutes.eventBooking,
+     // path: AppRoutes.eventBooking,
+     path: AppRoutes.allBooking,
    ),
 
    DashboardModel(

@@ -117,7 +117,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 250,
                 child
                 : PromotionCardSlider()
-        
             ),
             InkWell(
               onTap: () {
@@ -175,6 +174,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Navigator.pushNamed(
                           context,
                           DashboardModel.listDashboardModel[index].path,
+                  arguments:BusinessProfileData.vendorId(),
                         );
                       }
         

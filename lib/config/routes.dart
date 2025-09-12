@@ -94,7 +94,7 @@ static const String showEventScreen="/showEventScreen";
             settings: settings);
         //allBooking
       case allBooking:
-        return CustomPageRoute(builder: (_)=>AllBookings(),
+        return CustomPageRoute(builder: (_)=>AllBookings(vendorId: settings.arguments as String,),
             settings: settings);
 
       case vendorProfileScreen:
