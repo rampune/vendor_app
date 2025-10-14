@@ -369,7 +369,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
     );
   }
-
+  
   String _formatTimestamp(DateTime timestamp) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);

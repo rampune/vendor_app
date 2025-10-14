@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/config/theme.dart';
 import 'package:new_pubup_partner/data/source/network/end_points.dart';
 import 'package:new_pubup_partner/features/all_bookings/model/booking_model.dart';
