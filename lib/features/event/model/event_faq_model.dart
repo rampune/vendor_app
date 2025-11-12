@@ -33,6 +33,25 @@ try {
   return [];
 }
 }
+
+
+
+
+static void loadFromJson(dynamic faqJson) {
+  try {
+    if (faqJson is String) {
+      faqJson = jsonDecode(faqJson);
+    }
+    List<dynamic> listDynamic = faqJson is List ? faqJson : [];
+    List<EventFaqModel> faqs = listDynamic.map((item) => EventFaqModel.fromJson(item)).toList();
+    MyHiveBox.instance.getBox().put(AppStr.saveFaq, jsonEncode(faqs));
+  } catch (e) {
+    print("Error loading FAQs from JSON: $e");
+  }
+}
+
+
+
   static List<EventFaqModel> listEventFaqModel=
   [
     EventFaqModel(question: "Seating Arrangement", answer: false,isFaq: false),

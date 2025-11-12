@@ -80,16 +80,16 @@ class BookingDetailsScreen extends StatelessWidget {
                         label: 'Day',
                         value: booking.bookingDay,
                       ),
-                      _buildDetailRow(
-                        icon: Icons.group,
-                        label: 'Guests',
-                        value: booking.guestCount.toString(),
-                      ),
-                      _buildDetailRow(
-                        icon: Icons.monetization_on,
-                        label: 'Amount Paid',
-                        value: '₹${booking.amountPaid}',
-                      ),
+                      // _buildDetailRow(
+                      //   icon: Icons.group,
+                      //   label: 'Guests',
+                      //   value: booking.guestCount.toString(),
+                      // ),
+                      // _buildDetailRow(
+                      //   icon: Icons.monetization_on,
+                      //   label: 'Amount Paid',
+                      //   value: '₹${booking.amountPaid}',
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 16),

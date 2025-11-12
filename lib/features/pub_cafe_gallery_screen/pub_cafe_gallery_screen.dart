@@ -71,7 +71,7 @@ class PubCafeGalleryScreen extends StatelessWidget {
 
                   if(state is PubCafeGallerySuccessState)
                   {
-                    showSuccessAlert(context: context, title: "Menu Uploaded",
+                    showSuccessAlert(context: context, title: "Gallery Uploaded",
                         callBack: (){
                           context.pop();
                           context.pop();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:new_pubup_partner/features/about_pubup/view/about_us_screen.dart';
 import 'package:new_pubup_partner/features/admin_details/edit_profile/edit_profile.dart';
 import 'package:new_pubup_partner/features/all_bookings/all_bookings.dart';
 import 'package:new_pubup_partner/features/event/event_show/show_event.dart';
@@ -52,6 +53,8 @@ static const String showEventScreen="/showEventScreen";
   static const String updateEventScreen="/updateEventScreen";
   static const String ticketValidator="/ticketValidator";
   static const String vendorProfileScreen = '/vendorProfileScreen';
+
+  static const String aboutUsScreen = '/aboutUsScreen';
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
  case splashScreen:
@@ -113,6 +116,12 @@ static const String showEventScreen="/showEventScreen";
       case showEventScreen:
         return CustomPageRoute(builder: (_)=>ShowEvent(),
             settings: settings);
+
+
+    case aboutUsScreen:
+    return CustomPageRoute(builder: (_)=>AboutUsScreen(),
+    settings: settings);
+
 
       case editProfile:
         return CustomPageRoute(builder: (_)=>EditProfile(

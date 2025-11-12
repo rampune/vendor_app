@@ -39,14 +39,12 @@ class DashboardModel{
      title: "Sponsor Ads",
      path: AppRoutes.sponsorAdsScreen,
    ),
-   DashboardModel(
-     iconData: Icons.qr_code, // 📢 Sponsor Adds
-     title: "Ticket Validator",
-     path: AppRoutes.ticketValidator,
-   ),
-  // ,  DashboardModel(iconData:
-  //   Icons.price_check_rounded, title: "My Payouts",
-  //  path: AppRoutes.allEventScreen)
+   // DashboardModel(
+   //   iconData: Icons.qr_code, // 📢 Sponsor Adds
+   //   title: "Ticket Validator",
+   //   path: AppRoutes.ticketValidator,
+   // ),
+
 
 
   ]

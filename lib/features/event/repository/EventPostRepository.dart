@@ -17,4 +17,42 @@ class EventPostRepository{
     getData(endPoint: "event_manage/vendor_id/$vendorId/");
     return results;
   }
+
+
+  static Future<ApiResults?> pauseEventRepo({
+    required int eventId,
+    required bool isPaused,
+  }) async {
+
+    final updateData = {'isEventPause': isPaused};
+    ApiResults? results = await DioClient(baseUrl: EndPoints.baseUrl).
+    patchData(
+      endPoint: "event_manage/$eventId/",
+      data: updateData,
+    );
+    return results;
+  }
+
+
+  static Future<ApiResults?> deleteEventRepo({
+    required int eventId,
+  }) async {
+    ApiResults? results = await DioClient(baseUrl: EndPoints.baseUrl)
+        .deleteData(endPoint: "event_manage/$eventId/");
+    return results;
+  }
+
+
+  static Future<ApiResults?> updateEventRepo({
+    required int eventId,
+    required Map<String, dynamic> mapData,
+    required List<ImageUploadModel> listImgUploadModel,
+    required List<int> listCategory,
+  }) async {
+    ApiResults? results = await DioClient(baseUrl: EndPoints.baseUrl).
+    uploadImagesWithData(imageFiles: listImgUploadModel, data: mapData, endPoint: "event_manage/$eventId/");
+    return results;
+  }
+
+
 }

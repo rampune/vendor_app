@@ -58,27 +58,27 @@ class BookingCardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.group,),
-                const SizedBox(width: 8),
-                Text(
-                  'Guests: ${booking.guestCount}',
-                  style: const TextStyle(fontSize: 16,),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.group,),
+            //     const SizedBox(width: 8),
+            //     Text(
+            //       'Guests: ${booking.guestCount}',
+            //       style: const TextStyle(fontSize: 16,),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.monetization_on,),
-                const SizedBox(width: 8),
-                Text(
-                  'Amount Paid: ₹${booking.amountPaid}',
-                  style: const TextStyle(fontSize: 16,),
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.monetization_on,),
+            //     const SizedBox(width: 8),
+            //     Text(
+            //       'Amount Paid: ₹${booking.amountPaid}',
+            //       style: const TextStyle(fontSize: 16,),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 8),
             Row(
               children: [

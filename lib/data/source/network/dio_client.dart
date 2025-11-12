@@ -125,6 +125,27 @@ formData.files.addAll(await _filesToMapEntry(listUploadModel));
   }
 
 
+
+  Future<ApiResults> deleteData(
+      {required String endPoint,
+        Map<String, dynamic>? queryParameters,
+        Options? options}) async {
+
+    try {
+      logger(
+          'URL=${dio.options.baseUrl + endPoint + queryParameters.toString()}');
+
+      var response = await dio.delete(endPoint,
+          queryParameters: queryParameters, options: options);
+      logger('Response=${response.data}');
+      return  _apiSuccessResponse(response);
+    } catch(e,s){
+      return _apiErrorResponse(e, s);
+    }
+
+  }
+
+
   Future<ApiResults?> uploadImagesWithData({
     required List<ImageUploadModel> imageFiles,
     required Map<String, dynamic> data,

@@ -1,4 +1,5 @@
 class EventPostModel {
+  int? id;
   String? vendorData;
   String? eventName;
   String? eventDate;
@@ -24,13 +25,16 @@ String? location;
   galaryImagePath2
   ,galaryImagePath3
   ,layout,parkingType;
+  bool? isEventPause;
+
 
 
   EventPostModel(
-      {this.vendorData,
+      {
+        this.id,
+        this.vendorData,
         this.eventName,
-
-this.location,
+        this.location,
         this.eventDate,
         this.startTime,
         this.endTime,
@@ -48,9 +52,16 @@ this.location,
         this.ticketModelInString,
         this.tables,this.layout,this.galaryImagePath1,
         this.galaryImagePath2,this.galaryImagePath3,
-        this.bannerImg,this.parkingType,this.event_category_data});
+        this.bannerImg,this.parkingType,
+        this.event_category_data,
+        this.isEventPause = false,
+      });
+
+
   EventPostModel.fromJson(Map<String, dynamic> json) {
-event_category_data=json['event_category_data'];
+    // id = json['id'];
+    id = int.tryParse(json['id']?.toString() ?? '');
+    event_category_data=json['event_category_data'];
     bannerImg = json['bannerImg'];
     galaryImagePath1 = json['galaryImagePath1'];
     galaryImagePath2 = json['galaryImagePath2'];
@@ -73,21 +84,25 @@ event_category_data=json['event_category_data'];
     kidsFriendly = json['kids_friendly'];
     petsFriendly = json['pets_friendly'];
     keywords = json['keywords'];
-ticketModelInString=json['tickets'];
-
-
-
+    ticketModelInString=json['tickets'];
     termConditions = json['term_conditions'];
     artists=json['artists'];
+    tables=json['tables'];
 
-tables=json['tables'];
-
-
+    // Safe bool parsing: handle string "true"/"false" or actual bool
+    final pauseValue = json['isEventPause'];
+    if (pauseValue is bool) {
+      isEventPause = pauseValue;
+    } else if (pauseValue is String) {
+      isEventPause = pauseValue.toLowerCase() == 'true';
+    } else {
+      isEventPause = false;
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-data['status']=this.status;
+    data['status']=this.status;
     data['bannerImg'] = this.bannerImg;
     data['galaryImagePath1'] = this.galaryImagePath1;
     data['galaryImagePath2'] = this.galaryImagePath2;
@@ -109,13 +124,12 @@ data['status']=this.status;
     data['seating_arrangement'] = this.seatingArrangement;
     data['kids_friendly'] = this.kidsFriendly;
     data['pets_friendly'] = this.petsFriendly;
-
     data['keywords'] = this.keywords;
     data['term_conditions'] = this.termConditions;
-data['tickets']=this.ticketModelInString??"[]";
-data['artists']=this.artists??"[]";
-
+    data['tickets']=this.ticketModelInString??"[]";
+    data['artists']=this.artists??"[]";
     data['tables']=this.tables??"[]";
+    data['isEventPause'] = this.isEventPause;
 
     return data;
   }
@@ -154,12 +168,17 @@ class TicketModel {
   bool? isFree;
   String? coverCharges;
 
+  bool? isCoupleFree;
+
   TicketModel(
       {this.ticketType,
         this.description,
         this.price,
         this.isFree,
-        this.coverCharges});
+        this.coverCharges,
+
+        this.isCoupleFree
+      });
 
   TicketModel.fromJson(Map<String, dynamic> json) {
     ticketType = json['ticket_type'];
@@ -167,6 +186,10 @@ class TicketModel {
     price = json['price'];
     isFree = json['is_free'];
     coverCharges = json['cover_charges'];
+
+    isCoupleFree = json['is_couple_free'];
+
+
   }
 
   Map<String, dynamic> toJson() {
@@ -176,6 +199,8 @@ class TicketModel {
     data['price'] = this.price;
     data['is_free'] = this.isFree;
     data['cover_charges'] = this.coverCharges;
+
+    data['is_couple_free'] = this.isCoupleFree;
     return data;
   }
 }

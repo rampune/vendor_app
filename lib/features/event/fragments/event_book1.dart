@@ -139,13 +139,13 @@ class _EventBookingScreen1State extends State<EventBookingScreen1>
               CustomTextField(textController:
               EventController.descriptionController,
                 title: "Description",
-                length: 99,
+                length: 300,
                 validator: (String? data) {
                   if (data?.isEmpty ?? true) {
                     return "Enter valid value";
                   }
                 },
-                maxLines: 6,
+                maxLines: 8,
                 minLines: 5,
               ),
 
@@ -158,3 +158,11 @@ class _EventBookingScreen1State extends State<EventBookingScreen1>
   @override
   bool get wantKeepAlive => true;
 }
+
+
+
+
+
+
+
+

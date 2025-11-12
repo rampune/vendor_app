@@ -54,5 +54,7 @@ static List<int> categoryListInt=[];
   static   PageController eventPageController=PageController();
 
   static ValueNotifier<String> buttonTextNotifier=ValueNotifier("Save & Next");
+static ValueNotifier<bool> ticketIsFree = ValueNotifier<bool>(false);
+static ValueNotifier<bool> coupleIsFree = ValueNotifier<bool>(false);
 
 }

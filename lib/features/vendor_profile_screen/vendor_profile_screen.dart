@@ -85,52 +85,52 @@ VendorProfileScreen({super.key,required this.vendorId});
                             ? '${vendor.vendorDetails!.pubCafeFineDinningDescription!.substring(0, 150)}...'
                             : vendor.vendorDetails?.pubCafeFineDinningDescription ?? 'No description',
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("Owner E-Mail ID"),
                       subtitle:  Text(vendor.email!),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("Website"),
                       subtitle:  Text(vendor.website!),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("Operational Hours"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("Menu"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
                     ListTile(
                       title: const Text("Gallery"),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
-                        onPressed: () {},
-                      ),
+                      // trailing: IconButton(
+                      //   icon: const Icon(Icons.arrow_forward_ios, color: Colors.blue, size: 16),
+                      //   onPressed: () {},
+                      // ),
                     ),
                     const Divider(),
 

@@ -46,6 +46,7 @@ class _ShowEventState extends State<ShowEvent> {
 
             }
           } else if (state is EventPostErrorState) {
+            debugPrint('Error...${state.errorMsg}');
             return CustomErrorWidget(
               msg: state.errorMsg,
               retryCallBack: () {

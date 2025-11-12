@@ -29,6 +29,8 @@ class EventBookingModel {
   String? bookingTime;
   int? guestCount;
   int? amountPaid;
+  String? bookingId;
+  String? bookingStatus;
 
   EventBookingModel({
     this.id,
@@ -41,6 +43,8 @@ class EventBookingModel {
     this.bookingTime,
     this.guestCount,
     this.amountPaid,
+    this.bookingId,
+    this.bookingStatus
   });
 
   factory EventBookingModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,8 @@ class EventBookingModel {
       bookingTime: json['booking_time'],
       guestCount: json['guest_count'],
       amountPaid: json['amount_paid'],
+      bookingId: json['booking_id'],
+      bookingStatus: json['booking_status'],
     );
   }
 

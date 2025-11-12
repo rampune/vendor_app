@@ -62,7 +62,7 @@ Wrap(
   children: EventFaqModel.loadFaq().where((item)=>item.isFaq!=true).map((item)=>YesNoToggle(title: item.question,isYes: item.answer,callBack: (bool value){
     EventFaqModel.saveFaq(key: item.question, value: value);
   },)).toList(),),
-            
+
 
               20.height(),
               CustomDropDown(
@@ -137,3 +137,9 @@ Wrap(
   bool get wantKeepAlive => true;
 
 }
+
+
+
+
+
+

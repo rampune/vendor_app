@@ -14,4 +14,5 @@ class AppAssetsPath {
   static const successAnimation="assets/animation/success.json";
   static const emptyImg="assets/images/errorImg.png";
   static const loadingImage="assets/loading.jpeg";
+  static const noDataFoundImage = "assets/no_data_found_image.png";
 }
