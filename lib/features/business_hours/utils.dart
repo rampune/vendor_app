@@ -26,8 +26,8 @@ class BusinessHourUtils {
       DateTime endTime = format.parse(times[1]);
 
       // Validate time range
-      if (startTime.isAfter(endTime) || startTime.isAtSameMomentAs(endTime)) {
-        showToast("⚠ Start time must be before end time");
+      if (startTime.isAtSameMomentAs(endTime)) {
+        showToast("⚠ Start and end time cannot be same");
         return false;
       }
 

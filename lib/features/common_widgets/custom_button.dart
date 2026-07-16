@@ -17,6 +17,7 @@ class CustomButton extends StatelessWidget {
     this.textAlign,
     this.height,
     this.gradient,
+    this.isLoading = false,
   });
 
   final void Function()? onPress;
@@ -31,6 +32,8 @@ class CustomButton extends StatelessWidget {
   final String? id;
   final TextAlign? textAlign;
   final Gradient? gradient;
+  final bool isLoading;
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +42,10 @@ class CustomButton extends StatelessWidget {
     BorderRadius.circular(cornerRadius ?? AppSizes.buttonRadius * 1.5);
 
     final child = InkWell(
+
       borderRadius: radius,
-      onTap: onPress,
+      // onTap: onPress,
+      onTap: isLoading ? null : onPress,
       splashColor: AppColors.white.withOpacity(0.15),
       child: Ink(
         decoration: BoxDecoration(

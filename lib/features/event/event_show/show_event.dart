@@ -120,9 +120,6 @@ class _ShowEventState extends State<ShowEvent> {
 
 
 
-
-
-
 /// New code of Saransh 11/09/2025
   Widget successView({required EventGetSuccessState state}) {
     Map<String, List<EventPostModel>> allEventFilter = {};

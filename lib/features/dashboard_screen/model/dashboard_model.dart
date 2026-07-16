@@ -47,6 +47,11 @@ class DashboardModel{
 
 
 
+   DashboardModel(
+     iconData: Icons.bar_chart_rounded, // 📊 Sales Report
+     title: "Sales Report",
+     path: AppRoutes.salesReport,
+   ),
   ]
   ;
 }

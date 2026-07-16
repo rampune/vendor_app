@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/config/string.dart';
+import 'package:new_pubup_partner/data/source/local/secure_storage/secure_vendor_storage.dart';
 
 import '../../../config/common_functions.dart';
 import '../../../config/routes.dart';
@@ -143,22 +144,79 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: CustomButton(
                       buttonColor: theme.primaryColor,
                       buttonText: "Confirm",
-                      onPress: () {
+
+                      // onPress: () {
+                      //   hideKeyboard();
+                      //   if(userEnteredOtp.length!=4){
+                      //     showToast("please Enter 4 digit otp");
+                      //   }else if(userEnteredOtp==widget.otpModel.otp){
+                      //
+                      //     MyHiveBox.instance.getBox().put(AppStr.loginPhoneOrEmail, widget.otpModel.mobileNumber);
+                      //     Navigator.pushNamedAndRemoveUntil(context, AppRoutes.businessDetailsScreen,
+                      //             (u)=>false);
+                      //
+                      //
+                      //   }else{
+                      //   }
+                      //   print("${userEnteredOtp}");
+                      //   //  Navigator.pushNamed(context, AppRoutes.businessDetailsScreen);
+                      // },
+
+
+
+
+
+
+
+                      onPress: () async {
                         hideKeyboard();
-if(userEnteredOtp.length!=4){
-  showToast("please Enter 4 digit otp");
-}else if(userEnteredOtp==widget.otpModel.otp){
 
-  MyHiveBox.instance.getBox().put(AppStr.loginPhoneOrEmail, widget.otpModel.mobileNumber);
- Navigator.pushNamedAndRemoveUntil(context, AppRoutes.businessDetailsScreen,
-     (u)=>false);
+                        if (userEnteredOtp.length != 4) {
+                          showToast("Please enter 4 digit OTP");
+                          return;
+                        }
 
+                        if (userEnteredOtp != widget.otpModel.otp) {
+                          showToast("Invalid OTP");
+                          return;
+                        }
 
-}else{
-}
-print("${userEnteredOtp}");
-                      //  Navigator.pushNamed(context, AppRoutes.businessDetailsScreen);
+                        // SUCCESS! Now save login permanently
+                        OverlayLoadingProgress.start(context);
+
+                        try {
+                          final identifier = widget.otpModel.mobileNumber; // this could be email too!
+
+                          // Detect if it's email or phone
+                          final bool isEmail = identifier.contains('@');
+
+                          await SecureVendorStorage().saveLogin(
+                            identifier: identifier,
+                            type: isEmail ? "email" : "phone",
+                          );
+
+                          // Optional: Also save to Hive if other parts still use it (temporary bridge)
+                          MyHiveBox.instance.getBox().put(AppStr.loginPhoneOrEmail, identifier);
+
+                          OverlayLoadingProgress.stop();
+
+                          // Navigate to Business Details (first time) or Dashboard (later)
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            AppRoutes.businessDetailsScreen,
+                                (route) => false,
+                          );
+                        } catch (e) {
+                          OverlayLoadingProgress.stop();
+                          showToast("Something went wrong");
+                        }
                       },
+
+
+
+
+
+
                     ),
                   ),
 

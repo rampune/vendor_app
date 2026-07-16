@@ -46,7 +46,7 @@ class DashboardCard extends StatelessWidget {
               child: Text(
                 title,
                 style: context.titleSmall()?.copyWith(
-fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.bold,
 
                 ),
               ),

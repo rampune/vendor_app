@@ -62,6 +62,20 @@ class OperationalTime {
     data['slot'] = this.slot;
     return data;
   }
+
+
+// ADD THIS copyWith METHOD
+  OperationalTime copyWith({
+    String? day,
+    bool? isopen,
+    String? slot,
+  }) {
+    return OperationalTime(
+      day: day ?? this.day,
+      isopen: isopen ?? this.isopen,
+      slot: slot ?? this.slot,
+    );
+  }
 }
 
 class OperationalDate {
@@ -84,4 +98,9 @@ class OperationalDate {
     data['slot'] = this.slot;
     return data;
   }
+
+
+
 }
+
+

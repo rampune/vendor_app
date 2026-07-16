@@ -39,51 +39,89 @@ class _EventUpdateBookingState extends State<EventUpdateBooking> {
   int screen = 0;
   @override
   void initState() {
-    LoadSaveEvent.instance.loadEventFromHive();
+    // LoadSaveEvent.instance.loadEventFromHive(); // Avoid overwriting if we have existing data
     _populateExistingData();
     super.initState();
   }
 
   void _populateExistingData() {
     final model = widget.existingEvent;
-    // Populate controllers and lists from existing model
+    
+    // Clear static data first
+    _clearEventController();
+
+    // Basic Info
     EventController.eventNameController.text = model.eventName ?? '';
     EventController.eventDateController.text = model.eventDate ?? '';
     EventController.eventStartTimeController.text = model.startTime ?? '';
     EventController.eventEndTimeController.text = model.endTime ?? '';
     EventController.descriptionController.text = model.description ?? '';
     EventController.eventTermAndCondition.text = model.termConditions ?? '';
+    EventController.venueController.text = model.venue ?? '';
+    EventController.keywordController.text = model.keywords ?? '';
 
-    // Categories (assume parsed from model.categoryIds or similar; adjust as needed)
-    // EventController.categoryListInt = model.categoryIds ?? [];
+    // Categories
+    EventController.categoryListInt = model.getCategoryIds();
+    EventController.eventCategoryController.text = model.getCategoryNames();
 
     // Tickets
     EventController.listTickets = ticketStringToModel(model.ticketModelInString) ?? [];
 
     // Tables
-    // Parse from model.tables JSON string if available
-    // EventController.listEventTable = parseTables(model.tables ?? '[]');
-
-    // Artists
-    // Parse from model.artists JSON string
-    // EventController.artistDataList = parseArtists(model.artists ?? '[]');
-
-    // FAQs and toggles
-    // Populate EventFaqModel from model.faqDetails
-    if (model.faqDetails != null) {
-      final faqJson = jsonDecode(model.faqDetails!);
-      EventFaqModel.loadFromJson(faqJson); // Assume you add this method to EventFaqModel
+    if (model.tables != null) {
+      EventController.listEventTable = parseTables(model.tables) ?? [];
     }
 
-    // Other fields like min age, venue layout, etc.
-    EventController.minimumAgeRequired.text = model.minumumAgeRequirements ?? '';
-    EventController.venueLayout.text = model.layout ?? '';
-    // Photos: Set to existing URLs or keep default for new uploads
-    EventController.eventBannerPhoto.text = model.bannerImg ?? AppStr.filePickerDefaultText;
-    // Similarly for other photos
+    // Artists
+    if (model.artistsDatas != null) {
+      EventAddArtists.restoreSelectedArtistIds(model.artistsDatas!);
+    }
 
-    // Location/Venue
-    // Parse model.location JSON and populate venue fields if needed
+    // FAQs
+    if (model.faqDetails != null) {
+      try {
+        final faqJson = jsonDecode(model.faqDetails!);
+        EventFaqModel.loadFromJson(faqJson);
+      } catch (_) {}
+    }
+
+    // Photos
+    EventController.eventBannerPhoto.text = (model.bannerImg?.isNotEmpty ?? false) ? model.bannerImg! : AppStr.filePickerDefaultText;
+    EventController.venueLayout.text = model.layout ?? '';
+    EventController.venueLayoutPhoto.text = (model.venueLayoutPhoto?.isNotEmpty ?? false) ? model.venueLayoutPhoto! : AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto1.text = (model.galaryImagePath1?.isNotEmpty ?? false) ? model.galaryImagePath1! : AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto2.text = (model.galaryImagePath2?.isNotEmpty ?? false) ? model.galaryImagePath2! : AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto3.text = (model.galaryImagePath3?.isNotEmpty ?? false) ? model.galaryImagePath3! : AppStr.filePickerDefaultText;
+
+    // Additional Details
+    EventController.minimumAgeRequired.text = model.minumumAgeRequirements ?? '';
+    EventController.foodTypeController.text = model.foodType ?? '';
+    EventController.parkingTypeCotroller.text = model.parkingType ?? '';
+  }
+
+  void _clearEventController() {
+    EventController.eventNameController.clear();
+    EventController.eventDateController.clear();
+    EventController.eventStartTimeController.clear();
+    EventController.eventEndTimeController.clear();
+    EventController.descriptionController.clear();
+    EventController.eventTermAndCondition.clear();
+    EventController.venueController.clear();
+    EventController.keywordController.clear();
+    EventController.minimumAgeRequired.clear();
+    EventController.foodTypeController.clear();
+    EventController.parkingTypeCotroller.clear();
+    EventController.eventBannerPhoto.text = AppStr.filePickerDefaultText;
+    EventController.venueLayoutPhoto.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto1.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto2.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto3.text = AppStr.filePickerDefaultText;
+    EventController.listTickets = [];
+    EventController.listEventTable = [];
+    EventController.categoryListInt = [];
+    EventController.eventCategoryController.clear();
+    EventAddArtists.clearSelectedArtistIds();
+    EventFaqModel.clear(); 
   }
 
   List<TicketModel>? ticketStringToModel(String? rawString) {
@@ -102,17 +140,6 @@ class _EventUpdateBookingState extends State<EventUpdateBooking> {
     }
   }
 
-  List<ArtistsModel>? parseArtists(String? rawString) {
-    if (rawString == null || rawString.isEmpty) return [];
-    try {
-      List<dynamic> listDynamic = jsonDecode(rawString);
-      return listDynamic.map((item) => ArtistsModel.fromJson(item)).toList();
-    } catch (e) {
-      print("Error parsing artists: $e");
-      return [];
-    }
-  }
-
   List<EventTableModel>? parseTables(String? rawString) {
     if (rawString == null || rawString.isEmpty) return [];
     try {
@@ -124,179 +151,159 @@ class _EventUpdateBookingState extends State<EventUpdateBooking> {
     }
   }
 
-  List<int> parseCategories(String? rawString) {
-    if (rawString == null || rawString.isEmpty) return [];
-    try {
-      List<dynamic> listDynamic = jsonDecode(rawString);
-      return listDynamic.cast<int>();
-    } catch (e) {
-      print("Error parsing categories: $e");
-      return [];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-      SafeArea(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Align(
                 alignment: Alignment.topRight,
-                child: InkWell(
-                    onTap: () {
-                      askConfirmation(context, "Are you sure exit to Dashboard?",
-                          confirmCallBack: () {
-                            Navigator.pop(context);
-                          });
-                    },
-                    child: Icon(Icons.close_sharp,
-                      color: AppColors.redLight,)),
+                child: IconButton(
+                  icon: const Icon(Icons.close_sharp, color: AppColors.redLight),
+                  onPressed: () {
+                    askConfirmation(context, "Are you sure exit to Dashboard?", confirmCallBack: () {
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
               ),
-
               Expanded(
-                child: CustomViewPager
-                  (
-                    callBack: (int index) {
+                child: CustomViewPager(
+                  callBack: (int index) {
+                    setState(() {
                       screen = index;
-                      if (screen == 6) {
-                        EventController.buttonTextNotifier.value = "Update";
-                        return;
-                      } else {
-                        EventController.buttonTextNotifier.value = "Save &  Next";
-                      }
-                    },
-                    listScreens: [
-                      // EventBookingScreen1(isUpdate: true),
-                      // EventBookingScreen2(isUpdate: true),
-                      // EventAddTable(isUpdate: true),
-                      // EventBook3(isUpdate: true),
-                      // EventFaq(isUpdate: true),
-                      // EventAddArtists(isUpdate: true),
-                      // EventTC(isUpdate: true)
-                    ],
-                    controller: EventController.eventPageController),
+                    });
+                    if (screen == 6) {
+                      EventController.buttonTextNotifier.value = "Update";
+                    } else {
+                      EventController.buttonTextNotifier.value = "Save & Next";
+                    }
+                  },
+                  listScreens: const [
+                    EventBookingScreen1(),
+                    EventBookingScreen2(),
+                    EventAddTable(),
+                    EventBook3(),
+                    EventFaq(),
+                    EventAddArtists(),
+                    EventTC(),
+                  ],
+                  controller: EventController.eventPageController,
+                ),
               ),
               ValueListenableBuilder(
-                  valueListenable: EventController.buttonTextNotifier,
-                  builder: (context, btnText, child) {
-                    return Column(
-                      children: [
-                        BlocListener<EventPostBloc,EventPostState>
-                          (
-                          bloc: eventPostBloc,
-                          listener: (BuildContext context,
-                              EventPostState state){
-                            state is EventPostLoadingState?OverlayLoadingProgress.start(context):
-                            OverlayLoadingProgress.stop();
-                            if(state is EventPostSuccessState){
-                              MyHiveBox.instance.getBox().delete(AppStr.saveEventData);
-                              showSuccessAlert(context: context, title: "Your event has been successfully updated! You can view or edit it from your dashboard.",
-                                  callBack: (){
-                                    context.pop();
-                                    context.pop();
-                                  });
-                            }else if(state is EventPostErrorState){
-                              showAlert(context, state.errorMsg);
-                            }
-                          },child: SizedBox.shrink(),),
-                        CustomButton(
-                            buttonColor: dynamicThemeColor(context),
-                            buttonText:
-                            btnText,
-                            onPress: () async{
-                              hideKeyboard();
-                              LoadSaveEvent.instance.saveEventToHive();
-                              if (EventController.buttonTextNotifier.value ==
-                                  "Update") {
-                                if (!(EventController.booking1FromKey.currentState
-                                    ?.validate() ?? false)) {
-                                  screen = 0;
-                                  moveTo(screen);
-                                  return;
-                                } else if (!(EventController.booking3FromKey
-                                    .currentState?.validate() ?? false)) {
-                                  screen = 3;
-                                  moveTo(screen);
-                                  return;
-                                } else if (!(EventController.bookingFaqFormKey
-                                    .currentState?.validate() ?? false)) {
-                                  screen = 4;
-                                  moveTo(screen);
-                                  return;
-                                }
-                                else{
-                                  if (!(EventController.booingTcFormKey
-                                      .currentState?.validate() ?? false)) {
-                                    screen = 6;
-                                    moveTo(screen);
-                                    return;
-                                  }
-                                  if (MyHiveBox.instance.getBox().get(
-                                      AppStr.saveEventData) != null) {
-                                    log("data loged55 ${ MyHiveBox.instance.getBox().get(
-                                        AppStr.saveEventData)}");
-                                    try {
-                                      EventPostModel model = EventPostModel.fromJson(
-                                          jsonDecode(MyHiveBox.instance.getBox().get(
-                                              AppStr.saveEventData, defaultValue: "{}")));
-                                      try {
-                                        List<dynamic> listTicket=jsonDecode(model.ticketModelInString??'[]');
-                                        if(listTicket.isEmpty){
-                                          moveTo(1);
-                                          showToast("Add At least One Ticket");
-                                          return ;
-                                        }
-                                        List<dynamic> listArtist=jsonDecode(model.artists??'[]');
-                                        if(listArtist.isEmpty){
-                                          moveTo(5);
-                                          showToast("Add At least One Artist");
-
-                                          return ;
-                                        }
-                                        model.faqDetails = jsonEncode(EventFaqModel.loadFaq());
-
-                                      }catch(exception){
-                                        print("exception   $exception");
-                                      }
-// Dispatch update event with existing ID
-                                      eventPostBloc.add(
-                                          EventUpdatePostEvent(
-                                              eventId: widget.existingEvent.id!,
-                                              categoryList: EventController.categoryListInt,
-                                              listImageUploadModel:
-                                              await  eventImageList(model: model)
-                                              ,eventPostModel: model));
-
-                                    }catch(exception){
-                                      print("somthing wrong in ev");
-                                    }
-
-
-                                  }
-
-                                }
-                              }
-
-                              screen++;
-                              moveTo(screen);
-                            }),
-                      ],
-                    );
+                valueListenable: EventController.buttonTextNotifier,
+                builder: (context, btnText, child) {
+                  if (screen == 1 || screen == 2 || screen == 5) {
+                    return const SizedBox.shrink();
                   }
+                  return Column(
+                    children: [
+                      BlocListener<EventPostBloc, EventPostState>(
+                        bloc: eventPostBloc,
+                        listener: (BuildContext context, EventPostState state) {
+                          if (state is EventPostLoadingState) {
+                            OverlayLoadingProgress.start(context);
+                          } else {
+                            OverlayLoadingProgress.stop();
+                          }
+                          if (state is EventPostSuccessState) {
+                            MyHiveBox.instance.getBox().delete(AppStr.saveEventData);
+                            showSuccessAlert(
+                              context: context,
+                              title: "Your event has been successfully updated!",
+                              callBack: () {
+                                Navigator.pop(context); // Close Update screen
+                                Navigator.pop(context); // Go back to List
+                              },
+                            );
+                          } else if (state is EventPostErrorState) {
+                            showAlert(context, state.errorMsg);
+                          }
+                        },
+                        child: const SizedBox.shrink(),
+                      ),
+                      CustomButton(
+                        buttonColor: dynamicThemeColor(context),
+                        buttonText: btnText,
+                        onPress: () async {
+                          hideKeyboard();
+                          if (EventController.buttonTextNotifier.value == "Update") {
+                            // Validate all forms before update
+                            if (!_validateAll()) return;
+
+                            LoadSaveEvent.instance.saveEventToHive();
+                            final data = MyHiveBox.instance.getBox().get(AppStr.saveEventData);
+                            if (data != null) {
+                              try {
+                                final model = EventPostModel.fromJson(jsonDecode(data));
+                                model.faqDetails = jsonEncode(EventFaqModel.loadFaq());
+                                model.artistsDatas = EventAddArtists.getSelectedArtistIds();
+                                
+                                eventPostBloc.add(
+                                  EventUpdatePostEvent(
+                                    eventId: widget.existingEvent.id!,
+                                    categoryList: EventController.categoryListInt,
+                                    listImageUploadModel: await eventImageList(model: model),
+                                    eventPostModel: model,
+                                  ),
+                                );
+                              } catch (e) {
+                                showToast("Error preparing update data");
+                              }
+                            }
+                            return;
+                          }
+                          
+                          // Move to next page
+                          screen++;
+                          moveTo(screen);
+                        },
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),
         ),
-      )
-      ,);
+      ),
+    );
   }
+
+  bool _validateAll() {
+    if (!(EventController.booking1FromKey.currentState?.validate() ?? false)) {
+      moveTo(0);
+      return false;
+    }
+    // if (EventController.listTickets.isEmpty) {
+    //   moveTo(1);
+    //   showToast("Add at least one ticket");
+    //   return false;
+    // }
+    if (!(EventController.booking3FromKey.currentState?.validate() ?? false)) {
+      moveTo(3);
+      return false;
+    }
+    if (!(EventController.bookingFaqFormKey.currentState?.validate() ?? false)) {
+      moveTo(4);
+      return false;
+    }
+    if (!(EventController.booingTcFormKey.currentState?.validate() ?? false)) {
+      moveTo(6);
+      return false;
+    }
+    return true;
+  }
+
   moveTo(int index) {
-    screen=index;
+    setState(() {
+      screen = index;
+    });
     EventController.eventPageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 1000),

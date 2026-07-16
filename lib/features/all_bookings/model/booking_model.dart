@@ -422,8 +422,24 @@ class UserData {
       image: json['image'] ?? '',
       drinkingHabit: json['drinking_habbit'] ?? '',
       smokingHabit: json['smoking_habbit'] ?? '',
-      partyTypes: List<String>.from(json['party_types'] ?? []),
-      vibesImages: List<String>.from(json['vibes_images'] ?? []),
+      partyTypes: (json['party_types'] as List?)
+          ?.map((e) {
+            if (e is Map) {
+              return e['name']?.toString() ?? '';
+            }
+            return e.toString();
+          })
+          .where((e) => e.isNotEmpty)
+          .toList() ?? [],
+      vibesImages: (json['vibes_images'] as List?)
+          ?.map((e) {
+            if (e is Map) {
+              return e['image']?.toString() ?? e['name']?.toString() ?? '';
+            }
+            return e.toString();
+          })
+          .where((e) => e.isNotEmpty)
+          .toList() ?? [],
       status: json['status'] ?? '',
       socialMedia: json['socialMedia'],
       influencerMode: json['InfluencerMode'],

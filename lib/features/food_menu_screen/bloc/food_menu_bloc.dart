@@ -92,8 +92,10 @@
 
 
 //Fixme: Saransh New code
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_pubup_partner/config/common_functions.dart';
 import 'package:new_pubup_partner/data/source/network/api_result_handler.dart';
@@ -110,37 +112,103 @@ class FoodMenuBloc extends Bloc<FoodMenuEvent, FoodMenuState> {
       emit(FoodLoadingState());
       try {
         final vendorId = event.vendorId;
+        final images = event.imagesWithIndex;
+        final existingCount = event.existingImagesCount;
+        final removedIndices = event.removedIndices;
+
         if (vendorId.isEmpty) {
           emit(FoodErrorState(errorMsg: "Invalid Vendor Id"));
           return;
         }
-        debugPrint('Uploading menu for vendorId: $vendorId, images: ${event.listImageUploadModel}');
-        ApiResults? apiResult = await FoodMenuRepository.patchFoodMenuRepository(
-          listImages: event.listImageUploadModel,
-          vendorId: vendorId,
-        );
 
-        if (apiResult?.statusCode == 410 || apiResult?.statusCode == 404) {
-          debugPrint('Patch failed, falling back to upload: ${apiResult?.data}');
-          ApiResults? uploadResult = await FoodMenuRepository.uploadFoodMenuRepository(
-            listImages: event.listImageUploadModel,
-            mapData: {"vendor_data": vendorId},
-          );
-          if (uploadResult?.statusCode == 200 || uploadResult?.statusCode == 201) {
-            debugPrint('Upload successful: ${uploadResult?.data}');
-            emit(FoodSuccessState());
-          } else {
-            emit(FoodErrorState(errorMsg: "${uploadResult?.data} ${uploadResult?.message}"));
+        if (images.isEmpty && removedIndices.isEmpty) {
+          emit(FoodErrorState(errorMsg: "No changes to save"));
+          return;
+        }
+
+        ApiResults? finalResult;
+
+        // 1. Process Deletions
+        if (removedIndices.isNotEmpty) {
+          debugPrint('Handling Menu Deletions for indices: $removedIndices');
+          for (var idx in removedIndices) {
+            finalResult = await FoodMenuRepository.deleteMenuImageRepository(
+              vendorId: vendorId,
+              index: idx,
+            );
+            if (finalResult?.statusCode != 200 && finalResult?.statusCode != 201) {
+              emit(FoodErrorState(
+                errorMsg: "Delete failed for index $idx: ${finalResult?.message}"
+              ));
+              return;
+            }
           }
-        } else if (apiResult?.statusCode == 200 || apiResult?.statusCode == 201) {
-          debugPrint('Patch successful: ${apiResult?.data}');
+        }
+
+        // 2. Process Updates and Additions
+        if (images.isNotEmpty) {
+          // CASE 1: First time upload
+          if (existingCount == 0) {
+            debugPrint('Menu Case 1: First time upload');
+            final List<ImageUploadModel> listImages = images.values.map((file) {
+              return ImageUploadModel(file: file as File, fileName: "menu");
+            }).toList().cast<ImageUploadModel>();
+
+
+            finalResult = await FoodMenuRepository.uploadFoodMenuRepository(
+              listImages: listImages,
+              mapData: {"vendor_data": vendorId},
+            );
+          } 
+          // CASE 2, 3, 4: Existing images exist
+          else {
+            List<ImageUploadModel> updates = [];
+            List<ImageUploadModel> additions = [];
+
+            images.forEach((index, file) {
+              if (index < existingCount) {
+                // Update existing slot
+                updates.add(ImageUploadModel(file: file, fileName: "image_index_$index"));
+              } else {
+                // New addition
+                additions.add(ImageUploadModel(file: file, fileName: "menu"));
+              }
+            });
+
+            // Handle Updates
+            if (updates.isNotEmpty) {
+              debugPrint('Handling Menu Updates: ${updates.length} images');
+              finalResult = await FoodMenuRepository.updateFoodMenuImagesRepository(
+                listImages: updates,
+                vendorId: vendorId,
+              );
+              
+              if (finalResult?.statusCode != 200 && finalResult?.statusCode != 201) {
+                emit(FoodErrorState(errorMsg: "Update failed: ${finalResult?.message}"));
+                return;
+              }
+            }
+
+            // Handle Additions
+            if (additions.isNotEmpty) {
+              debugPrint('Handling Menu Additions: ${additions.length} images');
+              finalResult = await FoodMenuRepository.patchFoodMenuRepository(
+                listImages: additions,
+                vendorId: vendorId,
+              );
+            }
+          }
+        }
+
+        if (finalResult != null && (finalResult.statusCode == 200 || finalResult.statusCode == 201)) {
           emit(FoodSuccessState());
         } else {
-          emit(FoodErrorState(errorMsg: "${apiResult?.data} ${apiResult?.message}"));
+          emit(FoodErrorState(
+              errorMsg: finalResult?.message ?? "Operation failed with unknown error"));
         }
       } catch (exception) {
-        debugPrint('Exception during upload: $exception');
-        emit(FoodErrorState(errorMsg: "Upload failed: $exception"));
+        debugPrint('Exception during menu upload/delete: $exception');
+        emit(FoodErrorState(errorMsg: "Operation failed: $exception"));
       }
     }
   }
@@ -149,12 +217,16 @@ class FoodMenuBloc extends Bloc<FoodMenuEvent, FoodMenuState> {
 abstract class FoodMenuEvent {}
 
 class FoodMenuUploadEvent extends FoodMenuEvent {
-  final List<ImageUploadModel> listImageUploadModel;
+  final Map<int, File> imagesWithIndex;
   final String vendorId;
+  final int existingImagesCount;
+  final List<int> removedIndices;
 
   FoodMenuUploadEvent({
     required this.vendorId,
-    required this.listImageUploadModel,
+    required this.imagesWithIndex,
+    required this.existingImagesCount,
+    this.removedIndices = const [],
   });
 }
 
@@ -183,3 +255,4 @@ class FoodSuccessState extends FoodMenuState {
   @override
   List<Object?> get props => [];
 }
+

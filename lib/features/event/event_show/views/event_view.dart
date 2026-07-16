@@ -1,243 +1,14 @@
-
-
-
-
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import 'package:new_pubup_partner/config/extensions.dart';
-// import '../../../../config/theme.dart';
-// import '../../model/EventPostModel.dart';
-//
-// class EventView extends StatelessWidget {
-//   const EventView({
-//     super.key,
-//     required this.getEventModel,
-//     this.isDelete = true,
-//     this.isEdit = true,
-//   });
-//
-//   final EventPostModel getEventModel;
-//   final bool isDelete, isEdit;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     debugPrint('eventStatus....${getEventModel.status}');
-//
-//     final isUpcoming = (getEventModel.status?.toLowerCase().trim().contains("upcoming") ?? false);
-//     final tickets = ticketStringToModel(getEventModel.ticketModelInString);
-//     final ticketDisplay = tickets?.map((item) => '${item.ticketType} - \₹${item.price}').join(', ') ?? 'N/A';
-//
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-//       child: Card(
-//         elevation: 4,
-//         shape: RoundedRectangleBorder(
-//           borderRadius: BorderRadius.circular(12),
-//         ),
-//         child: Padding(
-//           padding: const EdgeInsets.all(20),
-//           child: Stack(
-//             children: [
-//               Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 mainAxisSize: MainAxisSize.min,
-//                 children: [
-//                   // Event Name as Title
-//                   Text(
-//                     getEventModel.eventName ?? 'Untitled Event',
-//
-//                   ),
-//                   const SizedBox(height: 16),
-//
-//                   // Event Date with Icon
-//                   _buildInfoRow(
-//                     context,
-//                     icon: Icons.calendar_today,
-//                     label: 'Event Date',
-//                     value: getEventModel.eventDate ?? 'TBD',
-//                     valueColor: AppColors.green,
-//                   ),
-//                   const SizedBox(height: 12),
-//
-//                   // Event Time with Icon
-//                   _buildInfoRow(
-//                     context,
-//                     icon: Icons.access_time,
-//                     label: 'Event Time',
-//                     value: '${getEventModel.startTime ?? ''} - ${getEventModel.endTime ?? ''}',
-//                     valueColor: AppColors.green,
-//                   ),
-//                   const SizedBox(height: 12),
-//
-//                   // Venue with Icon
-//                   _buildInfoRow(
-//                     context,
-//                     icon: Icons.location_on,
-//                     label: 'Venue',
-//                     value: _buildVenueText(),
-//                   ),
-//                   const SizedBox(height: 12),
-//
-//                   // Ticket Price with Icon
-//                   _buildInfoRow(
-//                     context,
-//                     icon: Icons.confirmation_number,
-//                     label: 'Ticket Price',
-//                     value: ticketDisplay,
-//                     valueColor: AppColors.green,
-//                   ),
-//
-//                 ],
-//               ),
-//               // Actions positioned at top-right
-//               if (isUpcoming)
-//                 Positioned(
-//                   top: 8,
-//                   right: 8,
-//                   child: Column(
-//                     children: [
-//
-//                       InkWell(
-//                         onTap: (){
-//
-//                         },
-//                         child: Container(
-//                           width: 70,
-//                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(15),
-//                             color: AppColors.themeColor,
-//                           ),
-//                           child: Text(textAlign: TextAlign.center,'Pause',style: TextStyle(fontSize: 14),),
-//                         ),
-//                       ),
-//
-//                       15.height(),
-//
-//                       InkWell(
-//                         onTap: (){
-//
-//                         },
-//                         child: Container(
-//                           width: 70,
-//                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(15),
-//                             color: AppColors.themeColor,
-//                           ),
-//                           child: Text(textAlign: TextAlign.center,'Update',style: TextStyle(fontSize: 14),),
-//                         ),
-//                       ),
-//
-//                       15.height(),
-//                       InkWell(
-//                         onTap: (){
-//
-//                         },
-//                         child: Container(
-//                           width: 70,
-//                           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-//                           decoration: BoxDecoration(
-//                             borderRadius: BorderRadius.circular(15),
-//                             color: AppColors.themeColor,
-//                           ),
-//                           child: Text(textAlign: TextAlign.center,'Delete',style: TextStyle(fontSize: 14),),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   String _buildVenueText() {
-//     String venueText = '';
-//     try {
-//       final locationJson = jsonDecode(getEventModel.location ?? '{}');
-//       venueText = '${locationJson['address'] ?? ''}, ${locationJson['city'] ?? ''}, ${locationJson['state'] ?? ''} ${locationJson['pinCode'] ?? ''}'.trim();
-//       if (venueText.isEmpty) venueText = getEventModel.venue ?? '';
-//     } catch (e) {
-//       venueText = getEventModel.venue ?? '';
-//     }
-//     return venueText.isEmpty ? 'Venue TBD' : venueText;
-//   }
-//
-//   Widget _buildInfoRow(
-//       BuildContext context, {
-//         required IconData icon,
-//         required String label,
-//         required String value,
-//         Color? valueColor,
-//       }) {
-//     return Row(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Icon(
-//           icon,
-//           size: 20,
-//           color: AppColors.green,
-//         ),
-//         const SizedBox(width: 12),
-//         Expanded(
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text(
-//                 label,
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.w500,
-//                   color: Colors.grey[600],
-//                 ),
-//               ),
-//               const SizedBox(height: 4),
-//               Text(
-//                 value,
-//                 style: TextStyle(
-//                   color: valueColor ?? Colors.black87,
-//                   fontWeight: FontWeight.w400,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-//
-//   List<TicketModel>? ticketStringToModel(String? rawString) {
-//     List<TicketModel>? listTicketModel;
-//     try {
-//       print("$rawString");
-//
-//       List<dynamic> listDynamic = jsonDecode(rawString ?? '');
-//       listTicketModel = listDynamic
-//           .map((item) => TicketModel.fromJson(item))
-//           .toList();
-//       return listTicketModel;
-//     } catch (exception) {
-//       print("--$exception");
-//       return null;
-//     }
-//   }
-// }
-
-
-
-
-
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:new_pubup_partner/config/extensions.dart';
 import 'package:new_pubup_partner/features/event/bloc/event_post_bloc.dart';
 import 'package:new_pubup_partner/features/event/event_update_booking.dart';
+import 'package:new_pubup_partner/features/event/event_show/views/event_details_screen.dart';
 import '../../../../config/theme.dart';
 import '../../model/EventPostModel.dart';
-
 
 class EventView extends StatelessWidget {
   const EventView({
@@ -252,378 +23,331 @@ class EventView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('eventStatus....${getEventModel.status}');
-
     final isUpcoming = (getEventModel.status?.toLowerCase().trim().contains("upcoming") ?? false);
     final isPaused = getEventModel.isEventPause ?? false;
-    final tickets = ticketStringToModel(getEventModel.ticketModelInString);
-    final ticketDisplay = tickets?.map((item) => '${item.ticketType} - \₹${item.price}').join(', ') ?? 'N/A';
+    final isCancelled = getEventModel.isEventCancel ?? false;
+    final tickets = _parseTickets(getEventModel.ticketModelInString);
+    final minPrice = tickets?.fold<int?>(null, (min, t) => (min == null || (t.price ?? 0) < min) ? t.price : min);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsScreen(event: getEventModel),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Event Name as Title
-                  Text(
-                    getEventModel.eventName ?? 'Untitled Event',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image & Status Section
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  child: Hero(
+                    tag: 'event_image_${getEventModel.id}',
+                    child: (getEventModel.bannerImg != null && getEventModel.bannerImg!.isNotEmpty)
+                        ? CachedNetworkImage(
+                            imageUrl: getEventModel.bannerImg!.startsWith('http') 
+                                ? getEventModel.bannerImg! 
+                                : 'https://adminapi.perseverancetechnologies.com${getEventModel.bannerImg!.startsWith('/') ? '' : '/'}${getEventModel.bannerImg!}',
+                            height: 180,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => _buildPlaceholder(),
+                            errorWidget: (context, url, error) => _buildPlaceholder(),
+                          )
+                        : _buildPlaceholder(),
+                  ),
+                ),
+                // Status Badge
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isCancelled
+                          ? Colors.red
+                          : (isUpcoming ? AppColors.green : Colors.grey),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      isCancelled
+                          ? 'CANCELLED'
+                          : (isUpcoming 
+                              ? (isPaused ? 'PAUSED' : 'UPCOMING') 
+                              : 'COMPLETED'),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  // Event Date with Icon
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.calendar_today,
-                    label: 'Event Date',
-                    value: getEventModel.eventDate ?? 'TBD',
-                    valueColor: AppColors.green,
+                ),
+                // Price Badge
+                if (minPrice != null)
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'From ₹$minPrice',
+                        style: TextStyle(color: AppColors.themeColor, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 12),
+              ],
+            ),
 
-                  // Event Time with Icon
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.access_time,
-                    label: 'Event Time',
-                    value: '${getEventModel.startTime ?? ''} - ${getEventModel.endTime ?? ''}',
-                    valueColor: AppColors.green,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Venue with Icon
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.location_on,
-                    label: 'Venue',
-                    value: _buildVenueText(),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Ticket Price with Icon
-                  _buildInfoRow(
-                    context,
-                    icon: Icons.confirmation_number,
-                    label: 'Ticket Price',
-                    value: ticketDisplay,
-                    valueColor: AppColors.green,
-                  ),
-                ],
-              ),
-              // Actions positioned at top-right
-              if (isUpcoming)
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Column(
+            // Details Section
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          if (isPaused) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Already paused'),
-                                backgroundColor: Colors.orange,
-                                duration: Duration(seconds: 2),
+                      Expanded(
+                        child: Text(
+                          getEventModel.eventName ?? 'Untitled Event',
+                          style: GoogleFonts.workSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (isUpcoming && isEdit)
+                        IconButton(
+                          icon: Icon(Icons.edit_note, color: AppColors.themeColor, size: 28),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventUpdateBooking(existingEvent: getEventModel),
                               ),
                             );
-                          } else {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext dialogContext) {
-                                return Dialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
-                                      color: Theme.of(context).dialogBackgroundColor,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.pause_circle_outline,
-                                          size: 64,
-                                          color: AppColors.themeColor.withOpacity(0.7),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          'Pause Event',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Text(
-                                          'Are you sure you want to pause this event?\nThis action can be reversed later if needed.',
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 24),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () => Navigator.of(dialogContext).pop(),
-                                              child: const Text('Cancel'),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(dialogContext).pop();
-                                                // Trigger bloc event
-                                                context.read<EventPostBloc>().add(
-                                                  EventPauseEvent(eventId: getEventModel.id! ),
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.themeColor,
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child: const Text('Pause Event'),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                        },
-                        child: Container(
-                          width: 70,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: isPaused ? Colors.grey : AppColors.themeColor,
-                          ),
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            isPaused ? 'Paused' : 'Pause',
-                            style: const TextStyle(fontSize: 14, color: Colors.white),
-                          ),
+                          },
                         ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  
+                  // Date and Time
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_month_outlined, size: 16, color: Colors.grey[600]),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${getEventModel.eventDate ?? "TBD"} • ${getEventModel.startTime ?? "TBD"}',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
-
-                      15.height(),
-
-                      InkWell(
-                        onTap: () {
-                          // TODO: Implement update action
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EventUpdateBooking(existingEvent: getEventModel),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          width: 70,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: AppColors.themeColor,
-                          ),
-                          child: const Text(
-                            textAlign: TextAlign.center,
-                            'Update',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
-                          ),
-                        ),
-                      ),
-
-                      15.height(),
-                      InkWell(
-                        onTap: () {
-                          // TODO: Implement delete action
-
-
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext dialogContext) {
-                              return Dialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                elevation: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    color: Theme.of(context).dialogBackgroundColor,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.delete_outline,
-                                        size: 64,
-                                        color: Colors.red.withOpacity(0.7),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        'Delete Event',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        'Are you sure you want to delete this event?\nThis action cannot be reversed.',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () => Navigator.of(dialogContext).pop(),
-                                            child: const Text('Cancel'),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.of(dialogContext).pop();
-                                              // Trigger bloc event
-                                              context.read<EventPostBloc>().add(
-                                                EventDeleteEvent(eventId: getEventModel.id!),
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                            child: const Text('Delete Event'),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-
-
-
-
-
-                        },
-                        child: Container(
-                          width: 70,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: AppColors.themeColor,
-                          ),
-                          child: const Text(
-                            textAlign: TextAlign.center,
-                            'Delete',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
-                          ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  
+                  // Venue
+                  Row(
+                    children: [
+                      Icon(Icons.location_on_outlined, size: 16, color: Colors.grey[600]),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          getEventModel.venue ?? 'Venue TBD',
+                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                ),
-            ],
-          ),
+
+                  // Bottom Actions (Pause/Delete/Cancel)
+                  if (isUpcoming && !isCancelled) ...[
+                    const SizedBox(height: 16),
+                    const Divider(height: 1),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildActionButton(
+                            context: context,
+                            label: isPaused ? 'Resume' : 'Pause',
+                            icon: isPaused ? Icons.play_arrow : Icons.pause,
+                            color: isPaused ? Colors.blue : Colors.orange,
+                            onTap: () => _handlePause(context),
+                          ),
+                        ),
+                        10.width(),
+                        Expanded(
+                          child: _buildActionButton(
+                            context: context,
+                            label: 'Delete',
+                            icon: Icons.delete_outline,
+                            color: Colors.red,
+                            onTap: () => _handleDelete(context),
+                          ),
+                        ),
+                        10.width(),
+                        Expanded(
+                          child: _buildActionButton(
+                            context: context,
+                            label: 'Cancel',
+                            icon: Icons.cancel_outlined,
+                            color: Colors.red,
+                            onTap: () => _handleCancel(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  String _buildVenueText() {
-    String venueText = '';
-    try {
-      final locationJson = jsonDecode(getEventModel.location ?? '{}');
-      venueText = '${locationJson['address'] ?? ''}, ${locationJson['city'] ?? ''}, ${locationJson['state'] ?? ''} ${locationJson['pinCode'] ?? ''}'.trim();
-      if (venueText.isEmpty) venueText = getEventModel.venue ?? '';
-    } catch (e) {
-      venueText = getEventModel.venue ?? '';
-    }
-    return venueText.isEmpty ? 'Venue TBD' : venueText;
-  }
-
-  Widget _buildInfoRow(
-      BuildContext context, {
-        required IconData icon,
-        required String label,
-        required String value,
-        Color? valueColor,
-      }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: AppColors.green,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: TextStyle(
-                  color: valueColor ?? Colors.black87,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 180,
+      width: double.infinity,
+      color: Colors.grey[100],
+      child: Icon(Icons.image_outlined, size: 48, color: Colors.grey[400]),
     );
   }
 
-  List<TicketModel>? ticketStringToModel(String? rawString) {
-    List<TicketModel>? listTicketModel;
-    try {
-      print("$rawString");
+  Widget _buildActionButton({
+    required BuildContext context,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: color.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 6),
+            Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13)),
+          ],
+        ),
+      ),
+    );
+  }
 
-      List<dynamic> listDynamic = jsonDecode(rawString ?? '');
-      listTicketModel = listDynamic
-          .map((item) => TicketModel.fromJson(item))
-          .toList();
-      return listTicketModel;
-    } catch (exception) {
-      print("--$exception");
+  void _handlePause(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(getEventModel.isEventPause == true ? 'Resume Event' : 'Pause Event'),
+        content: Text('Are you sure you want to ${getEventModel.isEventPause == true ? 'resume' : 'pause'} this event?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<EventPostBloc>().add(
+                EventPauseEvent(
+                  eventId: getEventModel.id!,
+                  isPaused: !(getEventModel.isEventPause ?? false),
+                ),
+              );
+            },
+            child: Text(getEventModel.isEventPause == true ? 'Resume' : 'Pause'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleDelete(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Event', style: TextStyle(color: Colors.red)),
+        content: const Text('This action is permanent and cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<EventPostBloc>().add(
+                EventDeleteEvent(eventId: getEventModel.id!),
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleCancel(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel Event', style: TextStyle(color: Colors.red)),
+        content: const Text('Are you sure you want to cancel this event?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<EventPostBloc>().add(
+                EventCancelEvent(
+                  eventId: getEventModel.id!,
+                  isCancelled: true,
+                ),
+              );
+            },
+            child: const Text('Yes, Cancel', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<TicketModel>? _parseTickets(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final List<dynamic> list = jsonDecode(raw);
+      return list.map((e) => TicketModel.fromJson(e)).toList();
+    } catch (_) {
       return null;
     }
   }

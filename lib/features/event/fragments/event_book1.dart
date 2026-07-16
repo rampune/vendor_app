@@ -101,7 +101,8 @@ class _EventBookingScreen1State extends State<EventBookingScreen1>
                           return "Select category";
                         }
                       },
-                      heading: "Select Event Category",
+                        heading: "Select Event Category",
+                        selectedIds: EventController.categoryListInt,
                         controller: EventController.eventCategoryController,
                         listCustomDropDownModel:
                         state.eventCategoryModel.data?.map((item)=>
@@ -111,8 +112,8 @@ class _EventBookingScreen1State extends State<EventBookingScreen1>
                             ),
                         ).toList()??[],
                         onSelect: (List<CustomDropDownModel> list){
-                        EventController.categoryListInt=list.map((item)=>item.id??0).toList()??[];
-                        EventController.eventCategoryController.text="${list.map((item)=>item.name??"").toList()}";
+                        EventController.categoryListInt=list.map((item)=>item.id??0).toList();
+                        EventController.eventCategoryController.text=list.map((item)=>item.name??"").toList().join(", ");
                         print("${list}");
                         });
                   }else if(state is EventCategoryErrorState){
@@ -131,7 +132,7 @@ class _EventBookingScreen1State extends State<EventBookingScreen1>
                 controller: EventController.eventBannerPhoto,
                 validator: (String ? data){
                   if(data==AppStr.filePickerDefaultText){
-                    return "please select minimum age";
+                    return "Please select event banner";
                   }
                 },
               ),

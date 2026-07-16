@@ -53,7 +53,8 @@ final TextEditingController startTimeController,endTimeController;
                 return;
               }
               final parsedDateTime = DateFormat('HH:mm').parse(startTimeController.text);
-              final timeOfDay = TimeOfDay(hour: parsedDateTime.hour, minute: parsedDateTime.minute+timeGapInMinute);
+              int totalMinutes = parsedDateTime.hour * 60 + parsedDateTime.minute + timeGapInMinute;
+              final timeOfDay = TimeOfDay(hour: (totalMinutes ~/ 60) % 24, minute: totalMinutes % 60);
 
  String ?timeData= await AppPickers.timePicker(context,startTime: timeOfDay);
  if(timeData!=null){

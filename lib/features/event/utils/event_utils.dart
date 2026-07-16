@@ -5,7 +5,7 @@ Future<List<ImageUploadModel>> eventImageList({required EventPostModel model})as
 
   List<ImageUploadModel> listImages=[];
 
-  List<dynamic> listDynamic= jsonDecode(model.artists??"[]");
+/*  List<dynamic> listDynamic= jsonDecode(model.artists??"[]");
   List<ArtistsModel>?list=   listDynamic.map((item)=>ArtistsModel.fromJson(item)).toList();
   print("--0009 $list");
   for(int index=0;index<(list.length);index++){
@@ -15,7 +15,7 @@ Future<List<ImageUploadModel>> eventImageList({required EventPostModel model})as
       listImages.add(ImageUploadModel(file: file, fileName: "artist_image_$index"));
     }
 
-  }
+  }*/
 
 
   File?galaryImage1,galaryImage2,galaryImage3,bannerImage,vanueLayoutPhoto;

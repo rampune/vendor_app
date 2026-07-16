@@ -32,7 +32,7 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Business Registration",
+            Text("Business Details",
               style: context.titleLarge(),),
             20.height(),
             Text("Build your Business profile and Mange Everything from One Dashboard",
@@ -85,6 +85,8 @@ class _BusinessKycState extends State<BusinessKyc> with AutomaticKeepAliveClient
             20.height(),
             CustomTextField(textController: KycController.businessDescription,
               title: "Business Description",
+              maxLines: 8,
+              minLines: 3,
               validator: (String? data){
                 if("$data".length<500){
 

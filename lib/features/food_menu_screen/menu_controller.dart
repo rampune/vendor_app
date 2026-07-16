@@ -5,4 +5,5 @@ class FoodMenuController{
   static TextEditingController foodMenuDrinkPhotoController=TextEditingController();
   static TextEditingController foodMenu3PhotoController=TextEditingController();
   static TextEditingController foodMenu4PhotoController=TextEditingController();
+  static TextEditingController foodMenu5PhotoController = TextEditingController();
 }

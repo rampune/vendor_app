@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_pubup_partner/features/about_pubup/view/about_us_screen.dart';
 import 'package:new_pubup_partner/features/admin_details/edit_profile/edit_profile.dart';
 import 'package:new_pubup_partner/features/all_bookings/all_bookings.dart';
+import 'package:new_pubup_partner/features/approx_price/approx_price_screen.dart';
 import 'package:new_pubup_partner/features/event/event_show/show_event.dart';
 import 'package:new_pubup_partner/features/event/event_show/views/event_viewer.dart';
 import 'package:new_pubup_partner/features/event/model/EventPostModel.dart';
 import 'package:new_pubup_partner/features/event/update_event/update_event.dart';
 import 'package:new_pubup_partner/features/notification_screen/notification_screen.dart';
 import 'package:new_pubup_partner/features/pub_cafe_gallery_screen/pub_cafe_gallery_screen.dart';
+import 'package:new_pubup_partner/features/sales_report/bloc/vendor_report_bloc.dart';
+import 'package:new_pubup_partner/features/sales_report/views/sales_report_screen.dart';
 import 'package:new_pubup_partner/features/vendor_profile_screen/vendor_profile_screen.dart';
 import 'package:new_pubup_partner/features/web_view/web_view.dart';
+import 'package:new_pubup_partner/features/features_facilities/features_facilities_screen.dart';
+import 'package:new_pubup_partner/features/uniques/uniques_screen.dart';
 import 'package:new_pubup_partner/ticket_validator/ticket_validator.dart';
 import '../features/admin_details/view/business_details.dart';
 import '../features/business_hours/business_hours.dart';
@@ -43,16 +49,21 @@ static const String sponsorAdsScreen="/sponsorAdsScreen";
 static const String showEventScreen="/showEventScreen";
   static const String kyc="/kyc";
   static const String businessHoursScreen="/businessHoursScreen";
+  static const String approxPriceScreen = "/approxPriceScreen";
+
   static const String eventBooking="/eventBooking";
   static const String notificationScreen="/notificationScreen";
   static const String allBooking="/allBooking";
   static const String menuScreen="/menuScreen";
   static const String myWebView="/mywebView";
   static const String pubCafeGallery = '/pubCafeGallery';
-  static const String editProfile="/editProfile";
+  static const String editProfile="/edit_profile";
   static const String updateEventScreen="/updateEventScreen";
   static const String ticketValidator="/ticketValidator";
   static const String vendorProfileScreen = '/vendorProfileScreen';
+  static const String salesReport = "/salesReport";
+  static const String featuresFacilitiesScreen = "/featuresFacilitiesScreen";
+  static const String uniquesScreen = "/uniquesScreen";
 
   static const String aboutUsScreen = '/aboutUsScreen';
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -89,6 +100,11 @@ static const String showEventScreen="/showEventScreen";
       case businessHoursScreen:
         return CustomPageRoute(builder: (_)=>BusinessHours(),
             settings: settings);
+
+      case approxPriceScreen:
+        return CustomPageRoute(builder: (_)=>ApproxPriceScreen(),
+            settings: settings);
+
       case eventBooking:
         return CustomPageRoute(builder: (_)=>EventBooking(),
             settings: settings);
@@ -108,7 +124,7 @@ static const String showEventScreen="/showEventScreen";
         return CustomPageRoute(builder: (_)=>MenuScreen(),
             settings: settings);
       case pubCafeGallery:
-        return CustomPageRoute(builder: (_)=>PubCafeGalleryScreen(),
+        return CustomPageRoute(builder: (_)=>const PubCafeGalleryScreen(),
             settings: settings);
       case myWebView:
         return CustomPageRoute(builder: (_)=>MyWebView(),
@@ -117,16 +133,30 @@ static const String showEventScreen="/showEventScreen";
         return CustomPageRoute(builder: (_)=>ShowEvent(),
             settings: settings);
 
+      case salesReport:
+        return CustomPageRoute(
+            builder: (_) => BlocProvider(
+              create: (context) => VendorReportBloc(),
+              child: SalesReportScreen(vendorId: settings.arguments as String?),
+            ),
+            settings: settings);
+
 
     case aboutUsScreen:
     return CustomPageRoute(builder: (_)=>AboutUsScreen(),
     settings: settings);
 
+      case featuresFacilitiesScreen:
+        return CustomPageRoute(builder: (_)=>FeaturesFacilitiesScreen(),
+            settings: settings);
+
+      case uniquesScreen:
+        return CustomPageRoute(builder: (_)=>UniquesScreen(),
+            settings: settings);
 
       case editProfile:
         return CustomPageRoute(builder: (_)=>EditProfile(
-          editType: settings.arguments as String,
-
+          editType: settings.arguments is String ? settings.arguments as String : null,
         ), settings: settings);
       case updateEventScreen:
         return CustomPageRoute(builder: (_)=>UpdateEvent(), settings: settings);

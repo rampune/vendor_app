@@ -53,7 +53,9 @@ if(result?.data!=null){
 abstract class StatusEvent {}
  class StatusGetKycEvent extends StatusEvent {
   final String vendorId;
-  StatusGetKycEvent({required this.vendorId});
+
+
+  StatusGetKycEvent({required this.vendorId,});
 }
 abstract class StatusState extends Equatable{
 

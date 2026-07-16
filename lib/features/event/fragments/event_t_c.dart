@@ -31,6 +31,14 @@ class EventTC extends StatelessWidget {
                     if((data?.length??0)<5){
                       return "Enter Minimum 5 char";
                     }
+                    final text = data?.trim() ?? '';
+                    if (text.isNotEmpty) {
+                      final wordCount = text.split(RegExp(r'\s+')).length;
+                      if (wordCount > 200) {
+                        return "Terms & conditions must be 200 words or less (currently $wordCount words)";
+                      }
+                    }
+                    return null;
                   },
                   textController: EventController.eventTermAndCondition),
               20.height(),

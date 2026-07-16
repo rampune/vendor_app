@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 
 
@@ -23,6 +25,7 @@ static GlobalKey<FormState> addTableFormKey=GlobalKey<FormState>();
 static TextEditingController sittingTableController=TextEditingController();
 static TextEditingController priceTableController=TextEditingController();
 static TextEditingController coverChargeTableController=TextEditingController();
+static TextEditingController foodTypeController = TextEditingController();
 
 
 static TextEditingController eventNameController=TextEditingController();
@@ -56,5 +59,9 @@ static List<int> categoryListInt=[];
   static ValueNotifier<String> buttonTextNotifier=ValueNotifier("Save & Next");
 static ValueNotifier<bool> ticketIsFree = ValueNotifier<bool>(false);
 static ValueNotifier<bool> coupleIsFree = ValueNotifier<bool>(false);
+
+static File? artistPhotoFile; // ← Critical: store the actual File
+
+static String lastAddedArtistName = "";
 
 }

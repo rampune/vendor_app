@@ -518,14 +518,8 @@ class _AllBookingsState extends State<AllBookings> with SingleTickerProviderStat
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text('Error: ${state.message}'),
+
                 Image.asset(AppAssetsPath.noDataFoundImage),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<EventBookingBloc>().add(FetchEventBookings(vendorId: widget.vendorId));
-                  },
-                  child: const Text('Retry'),
-                ),
               ],
             ),
           );
@@ -570,12 +564,6 @@ class _AllBookingsState extends State<AllBookings> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(AppAssetsPath.noDataFoundImage),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<EventBookingBloc>().add(FetchEventBookings(vendorId: widget.vendorId));
-                  },
-                  child: const Text('Retry'),
-                ),
               ],
             ),
           );
@@ -618,14 +606,7 @@ class _AllBookingsState extends State<AllBookings> with SingleTickerProviderStat
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Image.asset(AppAssetsPath.noDataFoundImage),
-                Text('Error: ${state.message}'),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<BookingBloc>().add(FetchBookings(vendorId: widget.vendorId));
-                  },
-                  child: const Text('Retry'),
-                ),
+                Image.asset(AppAssetsPath.noDataFoundImage),
               ],
             ),
           );

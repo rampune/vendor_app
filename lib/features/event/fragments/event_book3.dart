@@ -28,7 +28,7 @@ class _EventBook3State extends State<EventBook3> with AutomaticKeepAliveClientMi
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Turn vibes Into Bookings",
+              Text("Turn Vibes Into Bookings",
                 style: context.titleLarge(),),
               10.height(),
               Text("Get Discovered by the right crowd .Post your event in minutes.",
@@ -55,7 +55,28 @@ class _EventBook3State extends State<EventBook3> with AutomaticKeepAliveClientMi
 
 
                   ),
+
               20.height(),
+          CustomDropDown(
+            title: "Food Type",
+            controller: EventController.foodTypeController,
+            listCustomDropDownModel: [
+              CustomDropDownModel(name: "Veg"),
+              CustomDropDownModel(name: "Non-Veg"),
+              CustomDropDownModel(name: "Both"),
+            ], onSelect: (CustomDropDownModel model){
+
+          },
+            validator: (String ? data){
+              if(data?.isEmpty??true){
+                return "Please select food type";
+
+              }
+            },
+          ),
+              20.height(),
+
+
 Wrap(
   runSpacing: 20,
   spacing: double.infinity,
@@ -78,7 +99,7 @@ Wrap(
 
                 validator: (String ? data){
                   if(data?.isEmpty??true){
-                    return "please select minimum age";
+                    return "Please select venue layout";
 
                   }
                 },
@@ -88,7 +109,7 @@ Wrap(
                   controller: EventController.venueLayoutPhoto,
                 validator: (String ? data){
                   if(data==AppStr.filePickerDefaultText){
-                    return "please select minimum age";
+                    return "Please select venue layout";
 
                   }
                 },
@@ -98,7 +119,7 @@ Wrap(
                   controller: EventController.venueGalleryPhoto1,
                 validator: (String ? data){
                   if(data==AppStr.filePickerDefaultText){
-                    return "please select minimum age";
+                    return "Please select gallery";
 
                   }
                 },
@@ -108,7 +129,7 @@ Wrap(
                 controller: EventController.venueGalleryPhoto2,
                 validator: (String ? data){
                   if(data==AppStr.filePickerDefaultText){
-                    return "please select minimum age";
+                    return "Please select gallery";
 
                   }
                 },
@@ -117,13 +138,11 @@ Wrap(
                 controller: EventController.venueGalleryPhoto3,
                 validator: (String ? data){
                   if(data==AppStr.filePickerDefaultText){
-                    return "please select minimum age";
+                    return "Please select gallery";
 
                   }
                 },
               )
-
-
 
 
 

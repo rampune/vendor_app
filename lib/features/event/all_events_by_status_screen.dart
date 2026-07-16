@@ -109,10 +109,18 @@ class _AllEventsByStatusScreenState extends State<AllEventsByStatusScreen> {
             }
           },
           builder: (context, state) {
-            if (state is EventPostLoadingState) {
+            List<EventPostModel>? allEvents;
+            if (state is EventGetSuccessState) {
+              allEvents = state.getEventModelList;
+            } else if (state is EventPostSuccessState) {
+              allEvents = state.getEventModelList;
+            }
+
+            if (state is EventPostLoadingState && allEvents == null) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is EventGetSuccessState) {
-              final allEvents = state.getEventModelList;
+            }
+
+            if (allEvents != null) {
               final filteredEvents = allEvents.where((event) {
                 return event.status?.toLowerCase().trim().contains(
                   widget.status.toLowerCase().trim(),
@@ -135,9 +143,12 @@ class _AllEventsByStatusScreenState extends State<AllEventsByStatusScreen> {
                 separatorBuilder: (context, index) => const SizedBox(),
                 itemCount: filteredEvents.length,
               );
-            } else if (state is EventPostErrorState) {
+            }
+
+            if (state is EventPostErrorState) {
               return Center(child: Text('Error: ${state.errorMsg}'));
             }
+
             return const Center(child: Text('Press to load events'));
           },
         ),

@@ -1,8 +1,9 @@
 
-//Saransh new code
+
 
 import 'package:flutter/material.dart';
 import 'package:new_pubup_partner/config/theme.dart';
+import 'package:new_pubup_partner/features/business_hours/model/business_hour_model.dart';
 import 'package:new_pubup_partner/features/business_hours/widgets/working_hours_bottom_sheet_widget.dart';
 
 import '../bloc/business_hour_bloc.dart'; // Assuming AppColors is defined here
@@ -17,6 +18,9 @@ class WorkingHourTile extends StatelessWidget {
 
   final BusinessHourBloc businessHourBloc;
 
+
+
+
   const WorkingHourTile({
     super.key,
     required this.day,
@@ -26,7 +30,9 @@ class WorkingHourTile extends StatelessWidget {
     required this.leadingCallBack,
     required this.onTap,
 
-    required this.businessHourBloc
+    required this.businessHourBloc,
+
+
   });
 
   @override
@@ -121,6 +127,7 @@ class WorkingHourTile extends StatelessWidget {
                                 isPostRequest: false,
                                 slotTime: slotTime,
                                 isEditMode: true,
+
                               );
                             },
                           );
@@ -180,6 +187,7 @@ class WorkingHourTile extends StatelessWidget {
                                 isPostRequest: false,
                                 slotTime: slotTime,
                                 isEditMode: true,
+
                               );
                             },
                           );
@@ -224,3 +232,4 @@ class WorkingHourTile extends StatelessWidget {
     );
   }
 }
+

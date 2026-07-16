@@ -239,12 +239,23 @@ class Tickets {
   String? ticketType;
   String? coverCharges;
 
+  bool? isRefundable;
+  int? advancePrice;
+  int? refundablePrice;
+  int? refundablePricePercentage;
+  String? refundableTillDate;
+
   Tickets({
     this.price,
     this.isFree,
     this.description,
     this.ticketType,
     this.coverCharges,
+    this.isRefundable,
+    this.advancePrice,
+    this.refundablePrice,
+    this.refundablePricePercentage,
+    this.refundableTillDate,
   });
 
   factory Tickets.fromJson(Map<String, dynamic> json) {
@@ -254,6 +265,19 @@ class Tickets {
       description: json['description'],
       ticketType: json['ticket_type'],
       coverCharges: json['cover_charges'],
+      isRefundable: json['is_refundable'] is bool 
+          ? json['is_refundable'] 
+          : (json['is_refundable']?.toString().toLowerCase() == 'true'),
+      advancePrice: json['advance_price'] is int 
+          ? json['advance_price'] 
+          : int.tryParse(json['advance_price']?.toString() ?? ''),
+      refundablePrice: json['refundable_price'] is int 
+          ? json['refundable_price'] 
+          : int.tryParse(json['refundable_price']?.toString() ?? ''),
+      refundablePricePercentage: json['refundable_price_percentage'] is int 
+          ? json['refundable_price_percentage'] 
+          : int.tryParse(json['refundable_price_percentage']?.toString() ?? ''),
+      refundableTillDate: json['refundable_till_date']?.toString(),
     );
   }
 
@@ -264,6 +288,11 @@ class Tickets {
     data['description'] = description;
     data['ticket_type'] = ticketType;
     data['cover_charges'] = coverCharges;
+    data['is_refundable'] = isRefundable ?? false;
+    data['advance_price'] = advancePrice;
+    data['refundable_price'] = refundablePrice;
+    data['refundable_price_percentage'] = refundablePricePercentage;
+    data['refundable_till_date'] = refundableTillDate;
     return data;
   }
 }
@@ -274,11 +303,22 @@ class Tables {
   String? numberOfTables;
   String? sittingCapacity;
 
+  bool? isRefundable;
+  int? advancePrice;
+  int? refundablePrice;
+  int? refundablePricePercentage;
+  String? refundableTillDate;
+
   Tables({
     this.tablePrice,
     this.coverCharges,
     this.numberOfTables,
     this.sittingCapacity,
+    this.isRefundable,
+    this.advancePrice,
+    this.refundablePrice,
+    this.refundablePricePercentage,
+    this.refundableTillDate,
   });
 
   factory Tables.fromJson(Map<String, dynamic> json) {
@@ -287,6 +327,19 @@ class Tables {
       coverCharges: json['cover_charges'],
       numberOfTables: json['number_of_tables'],
       sittingCapacity: json['sitting_capacity'],
+      isRefundable: json['is_refundable'] is bool 
+          ? json['is_refundable'] 
+          : (json['is_refundable']?.toString().toLowerCase() == 'true'),
+      advancePrice: json['advance_price'] is int 
+          ? json['advance_price'] 
+          : int.tryParse(json['advance_price']?.toString() ?? ''),
+      refundablePrice: json['refundable_price'] is int 
+          ? json['refundable_price'] 
+          : int.tryParse(json['refundable_price']?.toString() ?? ''),
+      refundablePricePercentage: json['refundable_price_percentage'] is int 
+          ? json['refundable_price_percentage'] 
+          : int.tryParse(json['refundable_price_percentage']?.toString() ?? ''),
+      refundableTillDate: json['refundable_till_date']?.toString(),
     );
   }
 
@@ -296,6 +349,11 @@ class Tables {
     data['cover_charges'] = coverCharges;
     data['number_of_tables'] = numberOfTables;
     data['sitting_capacity'] = sittingCapacity;
+    data['is_refundable'] = isRefundable ?? false;
+    data['advance_price'] = advancePrice;
+    data['refundable_price'] = refundablePrice;
+    data['refundable_price_percentage'] = refundablePricePercentage;
+    data['refundable_till_date'] = refundableTillDate;
     return data;
   }
 }

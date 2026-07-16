@@ -21,6 +21,7 @@ class BottomSheetWidget extends StatefulWidget {
     this.isPostRequest = false,
     this.slotTime, // Existing slot time (e.g., "11:00 - 23:00")
     this.isEditMode = false, // True for editing slot, false for toggling isOpen
+
   });
 
   final BusinessHourBloc businessHourBloc;
@@ -29,6 +30,7 @@ class BottomSheetWidget extends StatefulWidget {
   final bool isPostRequest;
   final String? slotTime;
   final bool isEditMode; // True for editing slot, false for toggling isOpen
+
 
   @override
   State<BottomSheetWidget> createState() => _BottomSheetWidgetState();
@@ -73,30 +75,64 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
         if (!widget.isEditMode) // Show "Off" section only if not in edit mode
           SafeArea(
             child: Container(
+
               margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomButton(
-                    buttonColor: AppColors.redLight,
-                    buttonText: "Off on ${widget.day}",
-                    onPress: () {
-                      BusinessHourData hourModel = BusinessHourData(
-                        vendorData: BusinessProfileData.vendorId() ?? "",
-                        operationalTime: [
-                          OperationalTime(
-                            day: widget.day,
-                            isopen: false,
-                            slot: null, // No slot when closed
-                          ),
-                        ],
-                      );
-                      widget.businessHourBloc.add(
-                        BusinessHourPatchEvent(businessHourData: hourModel),
-                      );
-                      Navigator.pop(context);
-                    },
+
+                  10.height(),
+                  Text('Are you sure want to close?',style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+
+
+                  10.height(),
+                  Text(
+                    'Customers will not be able to see or book your services on ${widget.day} until you turn it back on.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[700],
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
+
+                  50.height(),
+
+
+                  Row(
+                    children: [
+
+                      CustomButton(
+                        buttonColor: Colors.grey,
+                        buttonText: "Cancel",
+                        onPress: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Spacer(),
+                      CustomButton(
+                        buttonColor: AppColors.themeColor,
+                        buttonText: "Yes! Close",
+                        onPress: () {
+                          BusinessHourData hourModel = BusinessHourData(
+                            vendorData: BusinessProfileData.vendorId() ?? "",
+                            operationalTime: [
+                              OperationalTime(
+                                day: widget.day.split('\n')[0].trim(),
+                                isopen: false,
+                                slot: null, // No slot when closed
+                              ),
+                            ],
+                          );
+                          widget.businessHourBloc.add(
+                            BusinessHourPatchEvent(businessHourData: hourModel),
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                  10.height(),
                 ],
               ),
             ),
@@ -174,9 +210,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                         DateTime endTime = format.parse(endTimeController.text);
 
                         // Validate time range
-                        if (startTime.isAfter(endTime) ||
-                            startTime.isAtSameMomentAs(endTime)) {
-                          showToast("⚠ Start time must be before end time");
+                        if (startTime.isAtSameMomentAs(endTime)) {
+                          showToast("⚠ Start and end time cannot be same");
                           return;
                         }
 
@@ -201,7 +236,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                           // Apply to selected day only
                           operationalTimes = [
                             OperationalTime(
-                              day: widget.day,
+                              day: widget.day.split('\n')[0].trim(),
                               isopen: true, // Set to true when updating slot
                               slot: slot,
                             ),
@@ -231,11 +266,22 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                     }
                   },
                 ),
+
+
+
+
+
+
+
+
                 30.height(),
               ],
             ),
           ),
         ),
+
+
+
 
       ],
     )
@@ -309,9 +355,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                     DateTime endTime = format.parse(endTimeController.text);
 
                     // Validate time range
-                    if (startTime.isAfter(endTime) ||
-                        startTime.isAtSameMomentAs(endTime)) {
-                      showToast("⚠ Start time must be before end time");
+                    if (startTime.isAtSameMomentAs(endTime)) {
+                      showToast("⚠ Start and end time cannot be same");
                       return;
                     }
 
@@ -336,7 +381,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                       // Apply to selected day only
                       operationalTimes = [
                         OperationalTime(
-                          day: widget.day,
+                          day: widget.day.split('\n')[0].trim(),
                           isopen: !(widget.isOpen ?? false), // Toggle isOpen
                           slot: slot,
                         ),
@@ -373,3 +418,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     );
   }
 }
+
+
+
+
+

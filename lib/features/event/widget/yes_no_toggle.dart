@@ -19,6 +19,13 @@ class _YesNoToggleState extends State<YesNoToggle> {
     super.initState();
   }
   @override
+  void didUpdateWidget(covariant YesNoToggle oldWidget) {
+    if (widget.isYes != oldWidget.isYes) {
+      isYes = widget.isYes;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+  @override
   Widget build(BuildContext context) {
 
 

@@ -1,3 +1,8 @@
+
+
+
+
+
 // import 'dart:convert';
 // import 'dart:developer';
 // import 'dart:io';
@@ -37,170 +42,197 @@
 //   int screen = 0;
 //   @override
 //   void initState() {
-//   LoadSaveEvent.instance.loadEventFromHive();
+//     LoadSaveEvent.instance.loadEventFromHive();
 //     super.initState();
 //   }
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       body:
-//     SafeArea(
-//       child: Padding(
-//         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Align(
-//               alignment: Alignment.topRight,
-//               child: InkWell(
-//                   onTap: () {
-//                     askConfirmation(context, "Are you sure exit to Dashboard?",
-//                         confirmCallBack: () {
-//                           Navigator.pop(context);
-//                         });
-//                   },
-//                   child: Icon(Icons.close_sharp,
-//                     color: AppColors.redLight,)),
-//             ),
+//       SafeArea(
+//         child: Padding(
+//           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Align(
+//                 alignment: Alignment.topRight,
+//                 child: InkWell(
+//                     onTap: () {
+//                       askConfirmation(context, "Are you sure exit to Dashboard?",
+//                           confirmCallBack: () {
+//                             Navigator.pop(context);
+//                           });
+//                     },
+//                     child: Icon(Icons.close_sharp,
+//                       color: AppColors.redLight,)),
+//               ),
 //
-//             Expanded(
-//               child: CustomViewPager
-//                 (
+//               Expanded(
+//                 child: CustomViewPager
+//                   (
 //
-//                   callBack: (int index) {
-//                    screen = index;
-//                     if (screen == 6) {
-//                       EventController.buttonTextNotifier.value = "Submit";
-//                       return;
-//                     } else {
-//                       EventController.buttonTextNotifier.value = "Save &  Next";
+//                     callBack: (int index) {
+//                       setState(() {
+//                         screen = index;
+//                       });
+//                       if (screen == 6) {
+//                         EventController.buttonTextNotifier.value = "Submit";
+//                         return;
+//                       }
+//
+//
+//                       else {
+//                         EventController.buttonTextNotifier.value = "Save &  Next";
+//                       }
+//                     },
+//                     listScreens: [
+//                       EventBookingScreen1(),
+//                       EventBookingScreen2(),
+//                       EventAddTable(),
+//                       EventBook3(),
+//                       EventFaq(),
+//                       EventAddArtists(),
+//                       EventTC()
+//                     ],
+//                     controller: EventController.eventPageController),
+//               ),
+//               ValueListenableBuilder(
+//                   valueListenable: EventController.buttonTextNotifier,
+//                   builder: (context, btnText, child) {
+//                     if (screen == 1 || screen == 2 || screen == 5) {
+//                       return const SizedBox.shrink();
 //                     }
-//                   },
-//                   listScreens: [
-//                     EventBookingScreen1(),
-//                     EventBookingScreen2(),
-//                     EventAddTable(),
-//                     EventBook3(),
-//                     EventFaq(),
-//                     EventAddArtists(),
-//                     EventTC()
-//                   ],
-//                   controller: EventController.eventPageController),
-//             ),
-//             ValueListenableBuilder(
-//                 valueListenable: EventController.buttonTextNotifier,
-//                 builder: (context, btnText, child) {
-//                   return Column(
-//                     children: [
-//                       BlocListener<EventPostBloc,EventPostState>
-//                         (
-//                         bloc: eventPostBloc,
-//                         listener: (BuildContext context,
-//                             EventPostState state){
-//                           state is EventPostLoadingState?OverlayLoadingProgress.start(context):
-//                       OverlayLoadingProgress.stop();
-//                           if(state is EventPostSuccessState){
-//                             MyHiveBox.instance.getBox().delete(AppStr.saveEventData);
-//                             showSuccessAlert(context: context, title: "Your event has been successfully scheduled! You can view or edit it from your dashboard.",
-//                             callBack: (){
-//                               context.pop();
-//                          context.pop();
-//                             });
-//                           }else if(state is EventPostErrorState){
-//                             showAlert(context, state.errorMsg);
-//                           }
-//                         },child: SizedBox.shrink(),),
-//                       CustomButton(
-//                           buttonColor: dynamicThemeColor(context),
-//                           buttonText:
-//                       btnText,
-//                           onPress: () async{
-//                             hideKeyboard();
-//             LoadSaveEvent.instance.saveEventToHive();
-//                             if (EventController.buttonTextNotifier.value ==
-//                                 "Submit") {
-//                               if (!(EventController.booking1FromKey.currentState
-//                                   ?.validate() ?? false)) {
-//                                 screen = 0;
-//                                 moveTo(screen);
-//                                 return;
-//                               } else if (!(EventController.booking3FromKey
-//                                   .currentState?.validate() ?? false)) {
-//                                screen = 3;
-//                                 moveTo(screen);
-//                                 return;
-//                               } else if (!(EventController.bookingFaqFormKey
-//                                   .currentState?.validate() ?? false)) {
-//                                 screen = 4;
-//                                 moveTo(screen);
-//                                 return;
-//                               }
-//                        else{
-//                          if (!(EventController.booingTcFormKey
+//                     return Column(
+//                       children: [
+//                         BlocListener<EventPostBloc,EventPostState>
+//                           (
+//                           bloc: eventPostBloc,
+//                           listener: (BuildContext context,
+//                               EventPostState state){
+//                             state is EventPostLoadingState?OverlayLoadingProgress.start(context):
+//                             OverlayLoadingProgress.stop();
+//                             if(state is EventPostSuccessState){
+//                               MyHiveBox.instance.getBox().delete(AppStr.saveEventData);
+//                               showSuccessAlert(context: context, title: "Your event has been successfully scheduled! You can view or edit it from your dashboard.",
+//                                   callBack: (){
+//                                     context.pop();
+//                                     context.pop();
+//                                   });
+//                             }else if(state is EventPostErrorState){
+//                               showAlert(context, state.errorMsg);
+//                             }
+//                           },child: SizedBox.shrink(),),
+//                         CustomButton(
+//                             buttonColor: dynamicThemeColor(context),
+//                             buttonText:
+//                             btnText,
+//                             onPress: () async{
+//                               hideKeyboard();
+//                               LoadSaveEvent.instance.saveEventToHive();
+//                               if (EventController.buttonTextNotifier.value ==
+//                                   "Submit") {
+//                                 if (!(EventController.booking1FromKey.currentState
+//                                     ?.validate() ?? false)) {
+//                                   setState(() { screen = 0; });
+//                                   moveTo(screen);
+//                                   return;
+//                                 } else if (!(EventController.booking3FromKey
 //                                     .currentState?.validate() ?? false)) {
-//                                   screen = 6;
+//                                   setState(() { screen = 3; });
+//                                   moveTo(screen);
+//                                   return;
+//                                 } else if (!(EventController.bookingFaqFormKey
+//                                     .currentState?.validate() ?? false)) {
+//                                   setState(() { screen = 4; });
 //                                   moveTo(screen);
 //                                   return;
 //                                 }
-//                                 if (MyHiveBox.instance.getBox().get(
-//                                     AppStr.saveEventData) != null) {
-//                                   log("data loged55 ${ MyHiveBox.instance.getBox().get(
-//                                       AppStr.saveEventData)}");
-//                                   try {
-//                                     EventPostModel model = EventPostModel.fromJson(
-//                                         jsonDecode(MyHiveBox.instance.getBox().get(
-//                                             AppStr.saveEventData, defaultValue: "{}")));
-// try {
-// List<dynamic> listTicket=jsonDecode(model.ticketModelInString??'[]');
-//   if(listTicket.isEmpty){
-//     moveTo(1);
-//     showToast("Add At least One Ticket");
-//     return ;
-//   }
-// List<dynamic> listArtist=jsonDecode(model.artists??'[]');
-// if(listArtist.isEmpty){
-//   moveTo(5);
-//   showToast("Add At least One Artist");
+//                                 else{
+//                                   if (!(EventController.booingTcFormKey
+//                                       .currentState?.validate() ?? false)) {
+//                                     setState(() { screen = 6; });
+//                                     moveTo(screen);
+//                                     return;
+//                                   }
+//                                   if (MyHiveBox.instance.getBox().get(
+//                                       AppStr.saveEventData) != null) {
+//                                     log("data loged55 ${ MyHiveBox.instance.getBox().get(
+//                                         AppStr.saveEventData)}");
+//                                     try {
+//                                       EventPostModel model = EventPostModel.fromJson(
+//                                           jsonDecode(MyHiveBox.instance.getBox().get(
+//                                               AppStr.saveEventData, defaultValue: "{}")));
+//                                       try {
+//                                         List<dynamic> listTicket=jsonDecode(model.ticketModelInString??'[]');
+//                                         if(listTicket.isEmpty){
+//                                           setState(() { screen = 1; });
+//                                           moveTo(1);
+//                                           showToast("Add At least One Ticket");
+//                                           return ;
+//                                         }
+//                                         List<dynamic> listArtist=jsonDecode(model.artists??'[]');
+//                                         if(listArtist.isEmpty){
+//                                           setState(() { screen = 5; });
+//                                           moveTo(5);
+//                                           showToast("Add At least One Artist");
 //
-//   return ;
-// }
-//   model.faqDetails = jsonEncode(EventFaqModel.loadFaq());
+//                                           return ;
+//                                         }
 //
-// }catch(exception){
-//   print("exception   $exception");
-// }
-// eventPostBloc.add(
-//     EventUploadPostEvent(
-//         categoryList: EventController.categoryListInt,
-//         listImageUploadModel:
-//         await  eventImageList(model: model)
-//         ,eventPostModel: model));
+//                                         // Optional: Ensure at least one artist has a valid server ID
+//                                         if (!EventController.artistDataList.any((a) => a.id != null)) {
+//                                           setState(() { screen = 5; });
+//                                           moveTo(5);
+//                                           showToast("Please select or successfully add an artist");
+//                                           return;
+//                                         }
 //
-//                                    }catch(exception){
-//                                     print("somthing wrong in ev");
+//
+//                                         model.faqDetails = jsonEncode(EventFaqModel.loadFaq());
+//
+//                                       }catch(exception){
+//                                         print("exception   $exception");
+//                                       }
+//                                       eventPostBloc.add(
+//                                           EventUploadPostEvent(
+//                                               categoryList: EventController.categoryListInt,
+//                                               listImageUploadModel:
+//                                               await  eventImageList(model: model)
+//                                               ,eventPostModel: model));
+//
+//                                     }catch(exception){
+//                                       print("somthing wrong in ev");
+//                                     }
+//
+//
 //                                   }
 //
-//
 //                                 }
-//
+//                               } else {
+//                                 screen++;
+//                                 moveTo(screen);
 //                               }
-//                             }
-//
-//                             screen++;
-//                             moveTo(screen);
-//                           }),
-//                     ],
-//                   );
-//                 }
-//             ),
-//           ],
+//                             }),
+//                       ],
+//                     );
+//                   }
+//               ),
+//             ],
+//           ),
 //         ),
-//       ),
-//     )
+//       )
 //       ,);
 //   }
 //   moveTo(int index) {
-//     screen=index;
+//     setState(() {
+//       screen=index;
+//     });
+//     if (index == 6) {
+//       EventController.buttonTextNotifier.value = "Submit";
+//     } else {
+//       EventController.buttonTextNotifier.value = "Save & Next";
+//     }
 //     EventController.eventPageController.animateToPage(
 //       index,
 //       duration: const Duration(milliseconds: 1000),
@@ -210,6 +242,14 @@
 //
 //
 // }
+
+
+
+
+
+
+
+
 
 
 
@@ -256,8 +296,40 @@ class _EventBookingState extends State<EventBooking> {
   int screen = 0;
   @override
   void initState() {
-    LoadSaveEvent.instance.loadEventFromHive();
+    MyHiveBox.instance.getBox().delete(AppStr.saveEventData);
+    _clearEventController();
     super.initState();
+  }
+
+  void _clearEventController() {
+    EventController.eventNameController.clear();
+    EventController.eventDateController.clear();
+    EventController.eventStartTimeController.clear();
+    EventController.eventEndTimeController.clear();
+    EventController.descriptionController.clear();
+    EventController.eventTermAndCondition.clear();
+    EventController.venueController.clear();
+    EventController.keywordController.clear();
+    EventController.minimumAgeRequired.clear();
+    EventController.foodTypeController.clear();
+    EventController.parkingTypeCotroller.clear();
+    EventController.eventBannerPhoto.text = AppStr.filePickerDefaultText;
+    EventController.venueLayoutPhoto.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto1.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto2.text = AppStr.filePickerDefaultText;
+    EventController.venueGalleryPhoto3.text = AppStr.filePickerDefaultText;
+    EventController.listTickets = [];
+    EventController.listEventTable = [];
+    EventController.categoryListInt = [];
+    EventController.eventCategoryController.clear();
+    EventAddArtists.clearSelectedArtistIds();
+    EventFaqModel.clear();
+    EventController.ticketType.clear();
+    EventController.ticketDescription.clear();
+    EventController.ticketPrice.clear();
+    EventController.ticketCoverCharges.clear();
+    EventController.artistDataList.clear();
+    EventController.venueLayout.clear();
   }
   @override
   Widget build(BuildContext context) {
@@ -379,20 +451,17 @@ class _EventBookingState extends State<EventBooking> {
                                               AppStr.saveEventData, defaultValue: "{}")));
                                       try {
                                         List<dynamic> listTicket=jsonDecode(model.ticketModelInString??'[]');
-                                        if(listTicket.isEmpty){
-                                          setState(() { screen = 1; });
-                                          moveTo(1);
-                                          showToast("Add At least One Ticket");
-                                          return ;
-                                        }
-                                        List<dynamic> listArtist=jsonDecode(model.artists??'[]');
-                                        if(listArtist.isEmpty){
-                                          setState(() { screen = 5; });
-                                          moveTo(5);
-                                          showToast("Add At least One Artist");
+                                        // if(listTicket.isEmpty){
+                                        //   setState(() { screen = 1; });
+                                        //   moveTo(1);
+                                        //   showToast("Add At least One Ticket");
+                                        //   return ;
+                                        // }
 
-                                          return ;
-                                        }
+                                        model.artistsDatas = EventAddArtists.getSelectedArtistIds();
+
+                                        debugPrint('artist...${model.artistsDatas}');
+
                                         model.faqDetails = jsonEncode(EventFaqModel.loadFaq());
 
                                       }catch(exception){
@@ -404,6 +473,8 @@ class _EventBookingState extends State<EventBooking> {
                                               listImageUploadModel:
                                               await  eventImageList(model: model)
                                               ,eventPostModel: model));
+
+
 
                                     }catch(exception){
                                       print("somthing wrong in ev");
@@ -417,7 +488,13 @@ class _EventBookingState extends State<EventBooking> {
                                 screen++;
                                 moveTo(screen);
                               }
-                            }),
+                            }
+
+
+
+
+
+                            ),
                       ],
                     );
                   }

@@ -18,6 +18,8 @@ extension StringExtension on String {
 }
 
 
+
+
 extension NullAndEmptyCheck on String? {
   bool isNullOrEmpty() {
     if (this == null) {

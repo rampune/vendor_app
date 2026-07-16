@@ -22,13 +22,15 @@ class PremiumTicketButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final ticketWidth = MediaQuery.of(context).size.width / 3;
 
-    return ClipPath(
-      clipper: PremiumTicketClipper(),
-      child: Container(
-        width: ticketWidth,
-        height: 80,
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        padding: const EdgeInsets.all(10),
+    return GestureDetector(
+      onTap: onEdit,
+      child: ClipPath(
+        clipper: PremiumTicketClipper(),
+        child: Container(
+          width: ticketWidth,
+          height: 80,
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFFFFD700), Color(0xFFFFF1C1)],
@@ -94,6 +96,7 @@ class PremiumTicketButton extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

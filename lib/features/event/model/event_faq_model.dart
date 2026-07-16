@@ -52,6 +52,10 @@ static void loadFromJson(dynamic faqJson) {
 
 
 
+  static void clear() {
+    MyHiveBox.instance.getBox().delete(AppStr.saveFaq);
+  }
+
   static List<EventFaqModel> listEventFaqModel=
   [
     EventFaqModel(question: "Seating Arrangement", answer: false,isFaq: false),

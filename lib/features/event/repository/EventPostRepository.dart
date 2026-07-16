@@ -6,8 +6,9 @@ class EventPostRepository{
   required List<ImageUploadModel> listImgUploadModel,
  required List<int> listCategory
   })async{
+    final cleanMap = Map<String, dynamic>.from(mapData)..remove('venue_layout');
     ApiResults ?results=await DioClient(baseUrl: EndPoints.baseUrl).
-    uploadImagesWithData(imageFiles: listImgUploadModel, data:mapData
+    uploadImagesWithData(imageFiles: listImgUploadModel, data:cleanMap
         , endPoint: "event_manage/");
   return results;
   }
@@ -33,6 +34,19 @@ class EventPostRepository{
     return results;
   }
 
+  static Future<ApiResults?> cancelEventRepo({
+    required int eventId,
+    required bool isCancelled,
+  }) async {
+    final updateData = {'isEventCancel': isCancelled};
+    ApiResults? results = await DioClient(baseUrl: EndPoints.baseUrl).
+    patchData(
+      endPoint: "event_manage/$eventId/",
+      data: updateData,
+    );
+    return results;
+  }
+
 
   static Future<ApiResults?> deleteEventRepo({
     required int eventId,
@@ -49,8 +63,9 @@ class EventPostRepository{
     required List<ImageUploadModel> listImgUploadModel,
     required List<int> listCategory,
   }) async {
+    final cleanMap = Map<String, dynamic>.from(mapData)..remove('venue_layout');
     ApiResults? results = await DioClient(baseUrl: EndPoints.baseUrl).
-    uploadImagesWithData(imageFiles: listImgUploadModel, data: mapData, endPoint: "event_manage/$eventId/");
+    uploadImagesWithData(imageFiles: listImgUploadModel, data: cleanMap, endPoint: "event_manage/$eventId/", isUpdate: true);
     return results;
   }
 

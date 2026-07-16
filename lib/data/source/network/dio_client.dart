@@ -4,20 +4,29 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:new_pubup_partner/data/source/network/end_points.dart';
+import 'package:new_pubup_partner/features/event/fragments/event_add_artists.dart';
 import '../../../config/logger.dart';
 import 'api_result_handler.dart';
+import 'package:path/path.dart' as path;
+
 part  'api_utils.dart';
 class DioClient {
   late Dio dio;
-  DioClient({String baseUrl = "", bool verify = true,
-  String  contentType="application/json"
+  DioClient({
+    String baseUrl = "",
+    bool verify = true,
+    String contentType = "application/json",
+    Duration? connectTimeout,
+    Duration? receiveTimeout,
+    Duration? sendTimeout,
   }) {
     BaseOptions baseOptions = BaseOptions(
       baseUrl: baseUrl,
       contentType: contentType,
       receiveDataWhenStatusError: true,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 60),
+      connectTimeout: connectTimeout ?? const Duration(seconds: 30),
+      receiveTimeout: receiveTimeout ?? const Duration(seconds: 60),
+      sendTimeout: sendTimeout ?? const Duration(seconds: 60),
     );
     dio = Dio(baseOptions);
     if (!verify) {
@@ -30,7 +39,6 @@ class DioClient {
         },
       );
     }
-
   }
 
   Future<ApiResults> patchData({
@@ -150,51 +158,75 @@ formData.files.addAll(await _filesToMapEntry(listUploadModel));
     required List<ImageUploadModel> imageFiles,
     required Map<String, dynamic> data,
     required String endPoint,
+    bool isUpdate = false,
+    ProgressCallback? uploadProgress,
   }) async {
-final filteredMap = Map<String, dynamic>.from(data)
-      ..removeWhere((key, value) => value == null);
+    final filteredMap = Map<String, dynamic>.from(data)
+      ..removeWhere((key, value) => value == null || (value is String && value.isEmpty));
+
     FormData formData = FormData();
 
-    filteredMap.forEach((key, value) {
-      String?encode;
-      try
-      {
-        if(key=="artists"||key=="tickets"||key=="tables"){
+    final List<int> artistIds = EventAddArtists.getSelectedArtistIds();
+    filteredMap.remove('artists_datas'); // Just in case, remove old one
 
-       encode= jsonEncode(value.toString());}
-      }catch(exception){
-print("abc exception dio_client line 272");
+    // Now add all other fields
+    filteredMap.forEach((key, value) {
+      if (key == 'tickets' || key == 'tables' || key == 'faq_details') {
+        formData.fields.add(MapEntry(key, jsonEncode(value)));
+      } else if (value is List) {
+        formData.fields.add(MapEntry(key, jsonEncode(value)));
+      } else {
+        formData.fields.add(MapEntry(key, value.toString()));
       }
-      formData.fields.add(MapEntry(key, encode??value.toString()));
     });
 
-    // Ab imagess =--
-    for (var file in imageFiles) {
-      formData.files.add(
-        MapEntry(
-          file.fileName, //
-          await MultipartFile.fromFile(
-            file.file.path,
-            filename: file.file.path.split('/').last,
-          ),
-        ),
-      );
+    // NOW ADD ARTIST IDS CORRECTLY — REPEATED FIELD WITHOUT BRACKETS
+    for (var id in artistIds) {
+      formData.fields.add(MapEntry('artists_datas', id.toString()));
     }
 
+    // Add images
+    for (var file in imageFiles) {
+      formData.files.add(MapEntry(
+        file.fileName,
+        await MultipartFile.fromFile(file.file.path, filename: file.file.path.split('/').last),
+      ));
+    }
 
-    log("\n\n\nform data \n${formData.files.toSet()}\n\n  data is\n\n ${formData.fields.toSet()} \n  \n");
-    // call to postjjj
-    return  postData(
-      endPoint: endPoint,
-      data: formData, //
-      contentType: "multipart/form-data",
-      uploadProgress: (sent, total) {
-        print("Uploading... ${(sent / total * 100).toStringAsFixed(2)}%");
-      },
-    );
+    // DEBUG LOG — YOU SHOULD SEE TWO LINES
+    formData.fields
+        .where((e) => e.key == 'artists_datas')
+        .forEach((e) => log("→ Sending artists_datas = ${e.value}"));
+
+    log("FINAL FORM FIELDS COUNT: ${formData.fields.length}");
+    log("ARTIST IDS SENT: $artistIds");
+
+    if (isUpdate) {
+      return patchData(
+        endPoint: endPoint,
+        data: formData,
+        contentType: 'multipart/form-data',
+        uploadProgress: uploadProgress,
+      );
+    } else {
+      return postData(
+        endPoint: endPoint,
+        data: formData,
+        contentType: 'multipart/form-data',
+        uploadProgress: uploadProgress,
+      );
+    }
   }
 
+
+
+
+
+
+
 }
+
+
 
 class ImageUploadModel{
 String fileName;

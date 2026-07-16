@@ -37,7 +37,7 @@ class AppPickers {
     );
 
     if (pickedDate == null) {
-      return "Select Birthday";
+      return "Select Date";
     }
 
     return  DateFormat('dd-MM-yyyy').format(pickedDate);
@@ -101,8 +101,8 @@ class AppPickers {
         // Assume wrap-around to next day
         pickedMinutes += 24 * 60;
       }
-      if (pickedMinutes <= startMinutes) {
-        showToast("select after start time");
+      if (pickedMinutes == startMinutes) {
+        showToast("select different time");
         return null;
       }
     }
@@ -122,27 +122,49 @@ class AppPickers {
 
 
 
-  static _timePickerTheme(context,child){
-    return  Theme(
+  static _timePickerTheme(BuildContext context, Widget? child) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Theme(
       data: Theme.of(context).copyWith(
         timePickerTheme: TimePickerThemeData(
-          backgroundColor: AppColors.white,
-          hourMinuteTextColor: AppColors.themeColor,
+          backgroundColor: isDark ? const Color(0xFF363636) : AppColors.white,
+          hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return isDark ? Colors.black : Colors.white;
+            }
+            return AppColors.themeColor;
+          }),
+          hourMinuteColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return AppColors.themeColor;
+            }
+            return isDark ? const Color(0xFF2D2D2D) : Colors.grey[200]!;
+          }),
           dialHandColor: AppColors.themeColor,
-          dialBackgroundColor: AppColors.themeColor.withOpacity(0.1),
+          dialBackgroundColor: isDark ? const Color(0xFF2D2D2D) : AppColors.themeColor.withOpacity(0.1),
+          dialTextColor: isDark ? Colors.white : Colors.black,
+          entryModeIconColor: AppColors.themeColor,
+          dayPeriodTextColor: AppColors.themeColor,
         ),
-        colorScheme: ColorScheme.light(
-          primary: AppColors.themeColor, // Dial and OK/Cancel color
-          onPrimary: Colors.white,
-          onSurface: AppColors.black,
-        ),
+        colorScheme: isDark
+            ? ColorScheme.dark(
+                primary: AppColors.themeColor,
+                onPrimary: Colors.black, // Dark text on mustard background
+                onSurface: Colors.white,
+              )
+            : ColorScheme.light(
+                primary: AppColors.themeColor,
+                onPrimary: Colors.white,
+                onSurface: AppColors.black,
+              ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
             foregroundColor: AppColors.themeColor,
           ),
         ),
       ),
-      child: child,
+      child: child!,
     );
   }
 

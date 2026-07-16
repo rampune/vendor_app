@@ -229,6 +229,7 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
 
 
 //Todo: This change is just for fetch the profile image from another api
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -315,6 +316,18 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
                         _buildDrawerItem(context, icon: Icons.lock_clock, title: 'Operational Hours', route: AppRoutes.businessHoursScreen,
                             endIcon: Icons.edit),
 
+                        _buildDrawerItem(context, icon: Icons.currency_rupee_outlined, title: 'Approx Price For 2 Person',route: AppRoutes.editProfile,
+                            endIcon: Icons.edit,
+                          subTitle: BusinessProfileData.getBusinessRegistrationData()?.businessData?.approxPrice.toString(),
+                          arguments: 'Approx Price For 2 Person',
+                        ),
+
+                        _buildDrawerItem(context, icon: Icons.featured_play_list_outlined, title: 'Features & Facilities', route: AppRoutes.featuresFacilitiesScreen,
+                            endIcon: Icons.edit),
+
+                        _buildDrawerItem(context, icon: Icons.auto_awesome_outlined, title: 'Uniques', route: AppRoutes.uniquesScreen,
+                            endIcon: Icons.edit),
+
                         _buildDrawerItem(context, icon: Icons.menu_book,
                             title: 'Food Menu', route: AppRoutes.menuScreen),
                         _buildDrawerItem(context, icon: Icons.image_outlined,
@@ -357,9 +370,9 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
   Widget _buildHeader(BuildContext context) {
     return BlocBuilder<VendorAllDetailsBloc, VendorAllDetailsState>(
       builder: (context, state) {
-        String? logoPath;
+        String? businessPhotoPath;
         if (state is VendorAllDetailsSuccessState) {
-          logoPath = state.vendorAllDetailsData.vendorDetails?.logo;
+          businessPhotoPath = state.vendorAllDetailsData.vendorDetails?.businessPhoto;
         }
         final businessData = BusinessProfileData.getBusinessRegistrationData()?.businessData;
         return Container(
@@ -374,10 +387,10 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
               CircleAvatar(
                 radius: 30,
                 backgroundColor: isDark(context) ? AppColors.darkGray : AppColors.white,
-                child: logoPath != null && logoPath.isNotEmpty
+                child: businessPhotoPath != null && businessPhotoPath.isNotEmpty
                     ? ClipOval(
                   child: Image.network(
-                    '${EndPoints.baseUrl}$logoPath',
+                    '${EndPoints.baseUrl}$businessPhotoPath',
                     fit: BoxFit.cover,
                     width: 60,
                     height: 60,
@@ -411,7 +424,7 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${businessData?.businessRegistrationName ?? 'Unknown Business'}", style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    Text("${businessData?.pubCafeFineDinningName ?? businessData?.businessRegistrationName ?? 'Unknown Business'}", style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold)),
                     10.height(),
                     Text("${BusinessProfileData.vendorId()}", style: context.bodySmall()?.copyWith(fontWeight: FontWeight.bold)),
@@ -443,14 +456,15 @@ class _PremiumAnimatedDrawerState extends State<PremiumAnimatedDrawer> with Sing
     required String title,
     required String route,
     IconData?endIcon,
-    String? subTitle
+    String? subTitle,
+    dynamic arguments,
   }) {
     return InkWell(
       onTap: () {
         Navigator.pop(context);
         if (ModalRoute.of(context)?.settings.name != route) {
           if(route==AppRoutes.editProfile){
-            Navigator.pushNamed(context, route,arguments: title);
+            Navigator.pushNamed(context, route,arguments:arguments ?? title, );
           }else{
             Navigator.pushNamed(context, route);
           }

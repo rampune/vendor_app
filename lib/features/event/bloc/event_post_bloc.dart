@@ -214,10 +214,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_pubup_partner/data/source/local/global_data/profile_data.dart';
 import 'package:new_pubup_partner/data/source/network/api_result_handler.dart';
 import 'package:new_pubup_partner/data/source/network/dio_client.dart';
+import 'package:new_pubup_partner/features/event/fragments/event_add_artists.dart';
 import 'package:new_pubup_partner/features/event/model/EventPostModel.dart';
 
 import '../repository/EventPostRepository.dart';
@@ -228,24 +230,32 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
   }
 
   handler(EventPostEvent event, Emitter<EventPostState> emit) async {
-    emit(EventPostLoadingState());
     if (event is EventUploadPostEvent) {
+      emit(EventPostLoadingState());
 
-      ApiResults? apiResult =await EventPostRepository.postEventRepo(
-          listCategory: event.categoryList,
-          mapData: event.eventPostModel.toJson(),
-          listImgUploadModel: event.listImageUploadModel
+
+      ApiResults? apiResult = await EventPostRepository.postEventRepo(
+        mapData: event.eventPostModel.toJson()
+          ..['artists_datas'] = EventAddArtists.getSelectedArtistIds().join(',')
+          ..['event_category_data'] = event.categoryList.join(','),
+        listImgUploadModel: event.listImageUploadModel,
+        listCategory: event.categoryList,
       );
+
+      debugPrint('apiResult...${apiResult?.data}');
       if(apiResult?.statusCode==200||apiResult?.statusCode==201||apiResult?.statusCode==202){
+
         emit(EventPostSuccessState());
       }else{
+        debugPrint('apiResult...${apiResult?.data}');
         emit(EventPostErrorState(errorMsg: "${apiResult?.data} ${apiResult?.message}  ${apiResult?.statusCode}"));
       }
       print("amra009\n\n\n${apiResult?.data} ${apiResult?.statusCode} ${apiResult?.message}\n\n\n");
 
+    }
 
-
-    } else if(event is EventGetEvent){
+    else if(event is EventGetEvent){
+      emit(EventPostLoadingState());
 
       ApiResults ? result=await EventPostRepository.getEventRepo(
           vendorId: BusinessProfileData.vendorId()??'');
@@ -259,17 +269,17 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
             log(jsonEncode(listDynamic));
             List<EventPostModel> getEventList=[];
             for (int index=0;index<listDynamic.length;index++){
-              //  getEventList.add(GetEventModel.fromJson(listDynamic[index]));
-              final stringifiedMap = (listDynamic[index] as Map<String, dynamic>)
-                  .map<String, String>((key, value) => MapEntry(key, (key=='tickets'||key=='artists'||key=='tables')?jsonEncode(value??'[]'):value?.toString() ?? ''));
-
-              final model = EventPostModel.fromJson(stringifiedMap);
+              final Map<String, dynamic> item = listDynamic[index] as Map<String, dynamic>;
+              final model = EventPostModel.fromJson(item);
               getEventList.add(model);
 
               print("009");
             }
             emit(EventGetSuccessState(getEventModelList: getEventList));
-          }catch(exception){
+          }catch(exception,stackTrace){
+
+            print("EVENT ERROR: $exception");
+            print("STACK TRACE: $stackTrace");
             emit(EventPostErrorState(errorMsg: "---0009$exception"));
           }
 
@@ -283,42 +293,86 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
 
 
     else if (event is EventPauseEvent) {
+      final previousState = state; // Capture the state before doing anything
+      // emit(EventPostLoadingState()); // Optional: don't emit loading for pause to avoid UI flicker
+      
       ApiResults? result = await EventPostRepository.pauseEventRepo(
         eventId: event.eventId,
-        isPaused: true,
+        isPaused: event.isPaused,
       );
       if (result?.statusCode == 200 || result?.statusCode == 201 ||
           result?.statusCode == 202) {
         // Update local state instantly
-        final currentState = state;
-        if (currentState is EventGetSuccessState) {
-          final updatedList = currentState.getEventModelList.map((model) {
+        List<EventPostModel>? currentList;
+        if (previousState is EventGetSuccessState) {
+          currentList = previousState.getEventModelList;
+        } else if (previousState is EventPostSuccessState) {
+          currentList = previousState.getEventModelList;
+        }
+
+        if (currentList != null) {
+          final updatedList = currentList.map((model) {
             if (model.id == event.eventId) {
-              // Mutate the model for simplicity (since it's a class instance)
-              model.isEventPause = true;
-              return model;
+              return model.copyWith(isEventPause: event.isPaused);
             }
             return model;
           }).toList();
-          emit(EventGetSuccessState(getEventModelList: updatedList));
+          emit(EventPostSuccessState(getEventModelList: updatedList));
         } else {
-          // Fallback: emit success, but ideally refetch if no list
           emit(EventPostSuccessState());
         }
       } else {
         emit(EventPostErrorState(
-            errorMsg: "${result?.data} ${result?.message}  ${result
-                ?.statusCode}"));
+            errorMsg: "${result?.data} ${result?.message}  ${result?.statusCode}"));
       }
     }
 
+    else if (event is EventCancelEvent) {
+      final previousState = state;
+      
+      ApiResults? result = await EventPostRepository.cancelEventRepo(
+        eventId: event.eventId,
+        isCancelled: event.isCancelled,
+      );
+      if (result?.statusCode == 200 || result?.statusCode == 201 ||
+          result?.statusCode == 202) {
+        // Update local state instantly
+        List<EventPostModel>? currentList;
+        if (previousState is EventGetSuccessState) {
+          currentList = previousState.getEventModelList;
+        } else if (previousState is EventPostSuccessState) {
+          currentList = previousState.getEventModelList;
+        }
 
+        if (currentList != null) {
+          final updatedList = currentList.map((model) {
+            if (model.id == event.eventId) {
+              return model.copyWith(isEventCancel: event.isCancelled);
+            }
+            return model;
+          }).toList();
+          emit(EventPostSuccessState(getEventModelList: updatedList));
+        } else {
+          emit(EventPostSuccessState());
+        }
+      } else {
+        emit(EventPostErrorState(
+            errorMsg: "${result?.data} ${result?.message}  ${result?.statusCode}"));
+      }
+    }
 
     else if (event is EventDeleteEvent) {
-      // Optimistic update: Remove immediately for responsive UI
-      final currentState = state;
-      if (currentState is EventGetSuccessState) {
-        final updatedList = currentState.getEventModelList
+      final previousState = state;
+      List<EventPostModel>? currentList;
+      if (previousState is EventGetSuccessState) {
+        currentList = previousState.getEventModelList;
+      } else if (previousState is EventPostSuccessState) {
+        currentList = previousState.getEventModelList;
+      }
+
+      List<EventPostModel>? updatedList;
+      if (currentList != null) {
+        updatedList = currentList
             .where((model) => model.id != event.eventId)
             .toList();
         emit(EventGetSuccessState(getEventModelList: updatedList));
@@ -329,10 +383,8 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
       );
       if (result?.statusCode == 200 || result?.statusCode == 204 ||
           result?.statusCode == 201 || result?.statusCode == 202) {
-        // Success: Already updated optimistically
-        emit(EventPostSuccessState());
+        emit(EventPostSuccessState(getEventModelList: updatedList));
       } else {
-        // Error: Refetch to restore
         emit(EventPostErrorState(
             errorMsg: "${result?.data} ${result?.message}  ${result?.statusCode}"));
         add(EventGetEvent()); // Refetch on error
@@ -342,19 +394,19 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
 
 
     else if (event is EventUpdatePostEvent) {
-      // Optimistic update: Update the model in local list
-      final currentState = state;
-      if (currentState is EventGetSuccessState) {
-        final updatedList = currentState.getEventModelList.map((model) {
+      final previousState = state;
+      List<EventPostModel>? currentList;
+      if (previousState is EventGetSuccessState) {
+        currentList = previousState.getEventModelList;
+      } else if (previousState is EventPostSuccessState) {
+        currentList = previousState.getEventModelList;
+      }
+
+      List<EventPostModel>? updatedList;
+      if (currentList != null) {
+        updatedList = currentList.map((model) {
           if (model.id == event.eventId) {
-            // Update with new model data (shallow copy or mutate as needed)
-            model.eventName = event.eventPostModel.eventName;
-            model.eventDate = event.eventPostModel.eventDate;
-            // ... Update other fields as needed (e.g., tickets, artists)
-            model.ticketModelInString = event.eventPostModel.ticketModelInString;
-            model.artists = event.eventPostModel.artists;
-            // Add more fields to update
-            return model;
+            return event.eventPostModel.copyWith(id: event.eventId);
           }
           return model;
         }).toList();
@@ -369,10 +421,8 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
       );
       if (apiResult?.statusCode == 200 || apiResult?.statusCode == 201 ||
           apiResult?.statusCode == 202) {
-        // Success: Already updated optimistically
-        emit(EventPostSuccessState());
+        emit(EventPostSuccessState(getEventModelList: updatedList));
       } else {
-        // Error: Refetch to restore
         emit(EventPostErrorState(errorMsg: "${apiResult?.data} ${apiResult?.message}  ${apiResult?.statusCode}"));
         add(EventGetEvent()); // Refetch on error
       }
@@ -387,13 +437,27 @@ class EventPostBloc extends Bloc<EventPostEvent, EventPostState> {
 abstract class EventPostEvent {}
 
 
+// class EventUploadPostEvent extends EventPostEvent {
+//   EventPostModel eventPostModel;
+//   final List<int> categoryList;
+//   final List<ImageUploadModel> listImageUploadModel;
+//
+//   EventUploadPostEvent({required this.eventPostModel,
+//     required this.listImageUploadModel,required this.categoryList
+//   });
+// }
+
+
+
 class EventUploadPostEvent extends EventPostEvent {
-  EventPostModel eventPostModel;
+  final EventPostModel eventPostModel;
   final List<int> categoryList;
   final List<ImageUploadModel> listImageUploadModel;
 
-  EventUploadPostEvent({required this.eventPostModel,
-    required this.listImageUploadModel,required this.categoryList
+  EventUploadPostEvent({
+    required this.eventPostModel,
+    required this.listImageUploadModel,
+    required this.categoryList,
   });
 }
 
@@ -404,12 +468,17 @@ class EventGetEvent extends EventPostEvent {
 
 class EventPauseEvent extends EventPostEvent {
   final int eventId;
+  final bool isPaused;
 
-  EventPauseEvent({required this.eventId});
+  EventPauseEvent({required this.eventId, required this.isPaused});
 }
 
+class EventCancelEvent extends EventPostEvent {
+  final int eventId;
+  final bool isCancelled;
 
-
+  EventCancelEvent({required this.eventId, required this.isCancelled});
+}
 
 class EventDeleteEvent extends EventPostEvent {
   final int eventId;
@@ -447,15 +516,17 @@ class EventPostLoadingState extends EventPostState {
 }
 
 class EventPostSuccessState extends EventPostState {
+  final List<EventPostModel>? getEventModelList;
+  EventPostSuccessState({this.getEventModelList});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [getEventModelList];
 }
 
 class EventGetSuccessState extends EventPostState {
   final List<EventPostModel> getEventModelList;
   EventGetSuccessState({required this.getEventModelList});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [getEventModelList];
 }
 
 
@@ -465,5 +536,5 @@ class EventPostErrorState extends EventPostState {
   EventPostErrorState({required this.errorMsg});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [errorMsg];
 }
